@@ -19,7 +19,7 @@ public class TestController extends HttpServlet {
         if (session != null) {
             session.invalidate();
         }
-        String path = getServletContext().getContextPath() + "/canex.html";
+        String path = getServletContext().getContextPath() + "/canexv4.html";
         response.sendRedirect(path);
     }
 
