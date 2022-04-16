@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"command": "mvn",
+			"label": "Deploy to TomCat",
+			"args": [
+				"war:war",
+				"org.codehaus.mojo:wagon-maven-plugin:upload-single",
+				"-Dwagon.fromFile=/home/andrea/src/tiw-project/target/tiw-project.war",
+				"-Dwagon.url=file:///opt/apache-tomcat-9.0.62/webapps/"
+			],
+			"suppressTaskName": false,
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}
