@@ -9,11 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDAO {
-    private final Connection connection;
-
+public class UserDAO extends DAO {
     public UserDAO(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
     /**
