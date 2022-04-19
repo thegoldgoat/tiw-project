@@ -18,7 +18,8 @@ public class UserDAO extends DAO {
      * @throws SQLException SQL library internal exception
      * @throws InvalidCredentialsException user was not
      */
-    public int login(String username, String password) throws SQLException, InvalidCredentialsException {
+    public int login(String username, String password)
+            throws SQLException, InvalidCredentialsException {
         String query = "SELECT UserPk FROM User WHERE username = ? AND password = ?";
 
         String hashedPassword = User.hashPassword(password);
@@ -48,7 +49,8 @@ public class UserDAO extends DAO {
      * @throws SQLException SQL library internal exception
      * @throws UsernameAlreadyUsedException There already exists an user with this username.
      */
-    public int register(String username, String password) throws SQLException, UsernameAlreadyUsedException {
+    public int register(String username, String password)
+            throws SQLException, UsernameAlreadyUsedException {
         String queryCheckUsername = "SELECT UserPk FROM User WHERE username = ?";
 
         PreparedStatement pStatement1 = connection.prepareStatement(queryCheckUsername);
@@ -76,7 +78,7 @@ public class UserDAO extends DAO {
         ResultSet resultSet2 = pStatement2.getGeneratedKeys();
 
         if (!resultSet2.next()) {
-            throw new UsernameAlreadyUsedException(username);
+            throw new RuntimeException("Should always return auto generated keys?");
         }
 
         return resultSet2.getInt(1);

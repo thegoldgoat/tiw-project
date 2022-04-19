@@ -1,5 +1,6 @@
 package it.polimi.tiw;
 
+import it.polimi.tiw.dao.AlbumDAO;
 import it.polimi.tiw.dao.UserDAO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ public abstract class BaseDB {
 
     protected Connection connection;
     protected UserDAO userDAO;
+    protected AlbumDAO albumDAO;
 
     @BeforeAll
     static void prepareDB() {
@@ -64,5 +66,6 @@ public abstract class BaseDB {
         assertNotNull(connection);
 
         userDAO = new UserDAO(connection);
+        albumDAO = new AlbumDAO(connection);
     }
 }

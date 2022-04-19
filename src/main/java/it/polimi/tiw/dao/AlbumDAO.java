@@ -20,18 +20,26 @@ public class AlbumDAO extends DAO {
      *
      * @param UserFk user creator of the album
      * @param title  title of the album
+     * @return AlbumPk of the newly generated album
      * @throws SQLException SQL library internal exception
      */
-    public void addNewAlbum(int UserFk, String title) throws SQLException {
+    public int addNewAlbum(int UserFk, String title) throws SQLException {
         String query = "INSERT INTO Album (title, date, UserFk) VALUES (?, ?, ?)";
 
-        PreparedStatement pStatement = connection.prepareStatement(query);
+        PreparedStatement pStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
         pStatement.setString(1, title);
         pStatement.setDate(2, new Date(System.currentTimeMillis()));
         pStatement.setInt(3, UserFk);
 
-        pStatement.executeQuery();
+        pStatement.executeUpdate();
+
+        ResultSet keys = pStatement.getGeneratedKeys();
+        if (!keys.next()) {
+            throw new RuntimeException("How could there be no auto generated key?");
+        }
+
+        return keys.getInt(1);
     }
 
     /**

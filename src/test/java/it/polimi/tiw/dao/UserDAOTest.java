@@ -31,7 +31,4 @@ public class UserDAOTest extends BaseDB {
         assertThrowsExactly(
                 UsernameAlreadyUsedException.class, () -> userDAO.register(username, password));
     }
-
-    @Test
-    public void register() {}
 }
