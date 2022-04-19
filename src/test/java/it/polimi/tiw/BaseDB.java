@@ -1,6 +1,7 @@
 package it.polimi.tiw;
 
 import it.polimi.tiw.dao.AlbumDAO;
+import it.polimi.tiw.dao.ImageDAO;
 import it.polimi.tiw.dao.UserDAO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,6 +26,7 @@ public abstract class BaseDB {
     protected Connection connection;
     protected UserDAO userDAO;
     protected AlbumDAO albumDAO;
+    protected ImageDAO imageDAO;
 
     @BeforeAll
     static void prepareDB() {
@@ -67,5 +72,6 @@ public abstract class BaseDB {
 
         userDAO = new UserDAO(connection);
         albumDAO = new AlbumDAO(connection);
+        imageDAO = new ImageDAO(connection);
     }
 }

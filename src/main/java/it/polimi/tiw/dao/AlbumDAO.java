@@ -50,13 +50,13 @@ public class AlbumDAO extends DAO {
      * @param AlbumFk ID of the album
      * @throws SQLException              SQL library internal exception
      * @throws InvalidOperationException Image does not exist or album does ont
-     *                                   exist or they are owned by someone else
+     *                                   exist, or they are owned by someone else
      */
     public void addImageToAlbum(int UserFk, int ImagePk, int AlbumFk) throws SQLException, InvalidOperationException {
         String checkOwnerShipQuery = """
                 SELECT * FROM Album A, Image I
                 WHERE A.AlbumPk = ? AND  I.ImagePk = ?
-                      A.UserFk = ? AND A.UserFk = I.UserFk
+                      AND A.UserFk = ? AND A.UserFk = I.UserFk
                 """;
 
         PreparedStatement checkOwner = connection.prepareStatement(checkOwnerShipQuery);
@@ -70,7 +70,7 @@ public class AlbumDAO extends DAO {
         }
 
         String queryAdd = """
-                INSERT INTO AlbumImage (ImageFk, AlbumFk)
+                INSERT INTO ImageAlbum (ImageFk, AlbumFk)
                 VALUES (?, ?)
                 """;
 
@@ -79,7 +79,7 @@ public class AlbumDAO extends DAO {
         pStatement.setInt(1, AlbumFk);
         pStatement.setInt(2, ImagePk);
 
-        pStatement.executeQuery();
+        pStatement.executeUpdate();
     }
 
     /**
@@ -92,17 +92,17 @@ public class AlbumDAO extends DAO {
      * @throws SQLException     SQL library internal exception
      * @throws NoImageException No images where found.
      *                          * Maybe AlbumFk is now owned by UserFk?
-     *                          AlbumFk does not exists?
+     *                          AlbumFk does not exist?
      */
     public List<Image> getImages(int UserFk, int AlbumFk, int page) throws SQLException, NoImageException {
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 
         String query = """
-                SELECT * FROM Image I, AlbumImage AI, Album A
+                SELECT * FROM Image I, ImageAlbum IA, Album A
                 WHERE A.UserFk = ? AND A.AlbumPk = ?
-                AND A.AlbumPk = AI.AlbumFk
-                AND I.ImagePk = AI.ImageFk
+                AND A.AlbumPk = IA.AlbumFk
+                AND I.ImagePk = IA.ImageFk
                 ORDER BY I.date DESC
                 LIMIT ?,?
                 """;

@@ -1,11 +1,6 @@
 package it.polimi.tiw.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Date;
+import java.sql.*;
 
 public class ImageDAO extends DAO {
 
@@ -33,7 +28,7 @@ public class ImageDAO extends DAO {
 
         pStatement.setString(1, title);
         pStatement.setString(2, description);
-        pStatement.setDate(3, (java.sql.Date) new Date(System.currentTimeMillis()));
+        pStatement.setDate(3, new Date(System.currentTimeMillis()));
         pStatement.setString(4, path);
         pStatement.setInt(5, UserFk);
 

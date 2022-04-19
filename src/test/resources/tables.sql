@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `Comment`;
 DROP TABLE IF EXISTS `ImageAlbum`;
 DROP TABLE IF EXISTS `Album`;
 DROP TABLE IF EXISTS `Image`;
@@ -41,7 +42,6 @@ CREATE TABLE `ImageAlbum`
     CONSTRAINT `ImageAlbum` FOREIGN KEY (`ImageFk`) REFERENCES `Image` (`ImagePk`)
 );
 
-DROP TABLE IF EXISTS `Comment`;
 CREATE TABLE `Comment`
 (
     `CommentPk` int PRIMARY KEY AUTO_INCREMENT,
