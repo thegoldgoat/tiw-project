@@ -1,7 +1,7 @@
 package it.polimi.tiw.exceptions;
 
-public class InvalidCredentials extends Exception{
-    public InvalidCredentials() {
+public class InvalidCredentialsException extends Exception {
+    public InvalidCredentialsException() {
         super("Invalid credentials. Username or password are wrong.");
     }
 }

@@ -1,0 +1,68 @@
+package it.polimi.tiw;
+
+import it.polimi.tiw.dao.UserDAO;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public abstract class BaseDB {
+    static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/dbfortests";
+    static final String DB_USER = "testing";
+    static final String DB_PASSWORD = "testing";
+
+    protected Connection connection;
+    protected UserDAO userDAO;
+
+    @BeforeAll
+    static void prepareDB() {
+        Connection prepareConnection;
+        // Connect to DB
+        assertDoesNotThrow(() -> Class.forName(DRIVER_NAME));
+
+        try {
+            prepareConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            assertNotNull(prepareConnection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        InputStream tablesFileStream = BaseDB.class.getClassLoader().getResourceAsStream("tables.sql");
+        assertNotNull(tablesFileStream);
+        String fileContent;
+        try {
+            fileContent = new String(tablesFileStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            assert false;
+            return;
+        }
+
+        assertDoesNotThrow(
+                () -> {
+                    for (String line : fileContent.split(";")) {
+                        Statement statement = prepareConnection.createStatement();
+                        statement.execute(line);
+                    }
+                });
+    }
+
+    @BeforeEach
+    void prepareConnection() {
+        assertDoesNotThrow(() -> Class.forName(DRIVER_NAME));
+        assertDoesNotThrow(
+                () -> connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD));
+
+        assertNotNull(connection);
+
+        userDAO = new UserDAO(connection);
+    }
+}
