@@ -45,6 +45,8 @@ CREATE TABLE `ImageAlbum`
 CREATE TABLE `Comment`
 (
     `CommentPk` int PRIMARY KEY AUTO_INCREMENT,
-    `text`      varchar(1000),
-    `username`  varchar(100) NOT NULL
+    `text`      varchar(1000) NOT NULL,
+    `username`  varchar(100)  NOT NULL,
+    `ImageFk`   int,
+    CONSTRAINT `CommentImage` FOREIGN KEY (`imageFk`) REFERENCES `Image` (`ImagePk`)
 );

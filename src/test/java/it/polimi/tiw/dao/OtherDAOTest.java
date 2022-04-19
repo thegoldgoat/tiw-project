@@ -1,9 +1,11 @@
 package it.polimi.tiw.dao;
 
 import it.polimi.tiw.BaseDB;
+import it.polimi.tiw.beans.Comment;
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.exceptions.InvalidOperationException;
 import it.polimi.tiw.exceptions.NoImageException;
+import it.polimi.tiw.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -24,6 +26,10 @@ public class OtherDAOTest extends BaseDB {
      * 8. Get images of that album with negative page
      * 9. Get images of that album with too high page
      * 10. Get first page of images of that album
+     * 11. Create a comment with a non-existing user
+     * 12. Create a comment with a non-existing image
+     * 13. Create a comment
+     * 14. Get comments from that image
      */
     @Test
     void bigTest() {
@@ -33,6 +39,7 @@ public class OtherDAOTest extends BaseDB {
         final String imgDesc = "Test Image Description";
         final String imgPath = "Test Image Description";
         final String albumTitle = "Test Album Title";
+        final String commentText = "Hello this is a comment :)";
 
         int userId;
         try {
@@ -104,5 +111,40 @@ public class OtherDAOTest extends BaseDB {
         assertEquals(imgDesc, img.getDescription());
         assertEquals(imgPath, img.getPath());
         assertEquals(userId, img.getUserFK());
+
+        // 11
+        assertThrows(
+                UserNotFoundException.class, () -> commentDAO.addComment(-1, imageId, commentText));
+
+        // 12
+        assertThrows(SQLException.class, () -> commentDAO.addComment(userId, -1, commentText));
+
+        // 13
+        int commentId;
+
+        try {
+            commentId = commentDAO.addComment(userId, imageId, commentText);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        // 14
+        List<Comment> comments;
+        try {
+            comments = commentDAO.getComments(imageId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        assertEquals(1, comments.size());
+        Comment comment = comments.get(0);
+        assertEquals(username, comment.getUsername());
+        assertEquals(imageId, comment.getImageFk());
+        assertEquals(commentText, comment.getText());
+        assertEquals(commentId, comment.getCommentPk());
     }
 }

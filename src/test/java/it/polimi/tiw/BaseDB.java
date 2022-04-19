@@ -1,6 +1,7 @@
 package it.polimi.tiw;
 
 import it.polimi.tiw.dao.AlbumDAO;
+import it.polimi.tiw.dao.CommentDAO;
 import it.polimi.tiw.dao.ImageDAO;
 import it.polimi.tiw.dao.UserDAO;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,6 +28,7 @@ public abstract class BaseDB {
     protected UserDAO userDAO;
     protected AlbumDAO albumDAO;
     protected ImageDAO imageDAO;
+    protected CommentDAO commentDAO;
 
     @BeforeAll
     static void prepareDB() {
@@ -73,5 +75,6 @@ public abstract class BaseDB {
         userDAO = new UserDAO(connection);
         albumDAO = new AlbumDAO(connection);
         imageDAO = new ImageDAO(connection);
+        commentDAO = new CommentDAO(connection);
     }
 }
