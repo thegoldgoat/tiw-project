@@ -1,6 +1,8 @@
 package it.polimi.tiw.dao;
 
 import it.polimi.tiw.BaseDB;
+import it.polimi.tiw.beans.Album;
+import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Comment;
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.exceptions.InvalidOperationException;
@@ -17,12 +19,16 @@ public class OtherDAOTest extends BaseDB {
 
     /*
      * 1. Register a new user
+     * !. Register a second user
      * 2. Add an image
+     * #. Add a second image
      * 3. Add an image with wrong user ID
      * 4. Add an album
+     * @. Add a second album
      * 5. Add an album with wrong user ID
      * 6. Add that image to that album with wrong user ID
      * 7. Add that image to that album
+     * $. Add other image to other album
      * 8. Get images of that album with negative page
      * 9. Get images of that album with too high page
      * 10. Get first page of images of that album
@@ -30,6 +36,8 @@ public class OtherDAOTest extends BaseDB {
      * 12. Create a comment with a non-existing image
      * 13. Create a comment
      * 14. Get comments from that image
+     * 15. Get all albums from user 1
+     * 16. Get all albums from user 2
      */
     @Test
     void bigTest() {
@@ -37,9 +45,16 @@ public class OtherDAOTest extends BaseDB {
         final String password = "testpassword";
         final String imgTitle = "Test Image Title";
         final String imgDesc = "Test Image Description";
-        final String imgPath = "Test Image Description";
+        final String imgPath = "Test Image Path";
         final String albumTitle = "Test Album Title";
         final String commentText = "Hello this is a comment :)";
+
+        final String otherUsername = "other";
+        final String otherPassword = "other";
+        final String otherAlbumTitle = "Other Album Title";
+        final String otherImgTitle = "Other Image Title";
+        final String otherImgDesc = "Other Image Description";
+        final String otherImgPath = "Other Image Path";
 
         int userId;
         try {
@@ -51,11 +66,31 @@ public class OtherDAOTest extends BaseDB {
             return;
         }
 
+        int otherUserId;
+        try {
+            otherUserId = userDAO.register(otherUsername, otherPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
         int imageId;
 
         try {
             // 2
             imageId = imageDAO.addImage(userId, imgTitle, imgDesc, imgPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        int otherImageId;
+        try {
+            // #
+            otherImageId =
+                    imageDAO.addImage(otherUserId, otherImgTitle, otherImgDesc, otherImgPath);
         } catch (Exception e) {
             e.printStackTrace();
             assert false;
@@ -76,6 +111,16 @@ public class OtherDAOTest extends BaseDB {
             return;
         }
 
+        // @
+        int otherAlbumId;
+        try {
+            otherAlbumId = albumDAO.addNewAlbum(otherUserId, otherAlbumTitle);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
         // 5
         assertThrows(SQLException.class, () -> albumDAO.addNewAlbum(-1, "cane"));
 
@@ -86,6 +131,9 @@ public class OtherDAOTest extends BaseDB {
 
         // 7
         assertDoesNotThrow(() -> albumDAO.addImageToAlbum(userId, imageId, albumId));
+
+        // $
+        assertDoesNotThrow(() -> albumDAO.addImageToAlbum(otherUserId, otherImageId, otherAlbumId));
 
         // 8
         assertThrows(SQLException.class, () -> albumDAO.getImages(userId, albumId, -1));
@@ -146,5 +194,55 @@ public class OtherDAOTest extends BaseDB {
         assertEquals(imageId, comment.getImageFk());
         assertEquals(commentText, comment.getText());
         assertEquals(commentId, comment.getCommentPk());
+
+        // 15
+        AllAlbums allAlbums;
+        try {
+            allAlbums = albumDAO.getAllAlbums(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+        List<Album> userAlbums = allAlbums.getUserAlbums();
+        List<Album> otherUserAlbums = allAlbums.getOtherUserAlbums();
+
+        assertEquals(1, userAlbums.size());
+        assertEquals(1, otherUserAlbums.size());
+
+        Album userAlbum = userAlbums.get(0);
+        assertEquals(albumId, userAlbum.getAlbumPK());
+        assertEquals(userId, userAlbum.getUserFk());
+        assertEquals(albumTitle, userAlbum.getTitle());
+
+        Album otherUserAlbum = otherUserAlbums.get(0);
+        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPK());
+        assertEquals(otherUserId, otherUserAlbum.getUserFk());
+        assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
+
+        // 16
+        try {
+            allAlbums = albumDAO.getAllAlbums(otherUserId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+        // These two are inverted so that the other assertions remains the same
+        otherUserAlbums = allAlbums.getUserAlbums();
+        userAlbums = allAlbums.getOtherUserAlbums();
+
+        assertEquals(1, userAlbums.size());
+        assertEquals(1, otherUserAlbums.size());
+
+        userAlbum = userAlbums.get(0);
+        assertEquals(albumId, userAlbum.getAlbumPK());
+        assertEquals(userId, userAlbum.getUserFk());
+        assertEquals(albumTitle, userAlbum.getTitle());
+
+        otherUserAlbum = otherUserAlbums.get(0);
+        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPK());
+        assertEquals(otherUserId, otherUserAlbum.getUserFk());
+        assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
     }
 }

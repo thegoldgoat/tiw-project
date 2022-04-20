@@ -1,5 +1,7 @@
 package it.polimi.tiw.dao;
 
+import it.polimi.tiw.beans.Album;
+import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.exceptions.InvalidOperationException;
 import it.polimi.tiw.exceptions.NoImageException;
@@ -44,7 +46,7 @@ public class AlbumDAO extends DAO {
 
     /**
      * Add image to album, both must be of the same user
-     * 
+     *
      * @param UserFk  ID of the owner of the image / album
      * @param ImagePk ID of the image
      * @param AlbumFk ID of the album
@@ -80,6 +82,42 @@ public class AlbumDAO extends DAO {
         pStatement.setInt(2, ImagePk);
 
         pStatement.executeUpdate();
+    }
+
+    private List<Album> getAllAlbumsFromQuery(String query, int userId) throws SQLException {
+        PreparedStatement pStatement = connection.prepareStatement(query);
+
+        pStatement.setInt(1, userId);
+
+        ResultSet resultSet = pStatement.executeQuery();
+
+        List<Album> returnValues = new ArrayList<>();
+        while (resultSet.next()) {
+            returnValues.add(new Album(
+                    resultSet.getInt("AlbumPk"),
+                    resultSet.getString("title"),
+                    resultSet.getDate("date"),
+                    resultSet.getInt("UserFk")
+            ));
+        }
+
+        return returnValues;
+    }
+
+    AllAlbums getAllAlbums(int UserFk) throws SQLException {
+        String queryMyAlbums = """
+                    SELECT * FROM Album
+                    WHERE UserFk = ?
+                """;
+
+        String queryOtherAlbums = """
+                    SELECT * FROM Album
+                    WHERE UserFk != ?
+                """;
+        List<Album> userAlbums = getAllAlbumsFromQuery(queryMyAlbums, UserFk);
+        List<Album> otherUsersAlbums = getAllAlbumsFromQuery(queryOtherAlbums, UserFk);
+
+        return new AllAlbums(userAlbums, otherUsersAlbums);
     }
 
     /**
