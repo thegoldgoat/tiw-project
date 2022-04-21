@@ -211,12 +211,12 @@ public class OtherDAOTest extends BaseDB {
         assertEquals(1, otherUserAlbums.size());
 
         Album userAlbum = userAlbums.get(0);
-        assertEquals(albumId, userAlbum.getAlbumPK());
+        assertEquals(albumId, userAlbum.getAlbumPk());
         assertEquals(userId, userAlbum.getUserFk());
         assertEquals(albumTitle, userAlbum.getTitle());
 
         Album otherUserAlbum = otherUserAlbums.get(0);
-        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPK());
+        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPk());
         assertEquals(otherUserId, otherUserAlbum.getUserFk());
         assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
 
@@ -236,12 +236,12 @@ public class OtherDAOTest extends BaseDB {
         assertEquals(1, otherUserAlbums.size());
 
         userAlbum = userAlbums.get(0);
-        assertEquals(albumId, userAlbum.getAlbumPK());
+        assertEquals(albumId, userAlbum.getAlbumPk());
         assertEquals(userId, userAlbum.getUserFk());
         assertEquals(albumTitle, userAlbum.getTitle());
 
         otherUserAlbum = otherUserAlbums.get(0);
-        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPK());
+        assertEquals(otherAlbumId, otherUserAlbum.getAlbumPk());
         assertEquals(otherUserId, otherUserAlbum.getUserFk());
         assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
     }
