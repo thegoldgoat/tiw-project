@@ -5,8 +5,8 @@ import it.polimi.tiw.beans.Album;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Comment;
 import it.polimi.tiw.beans.Image;
+import it.polimi.tiw.exceptions.AlbumNotExistsException;
 import it.polimi.tiw.exceptions.InvalidOperationException;
-import it.polimi.tiw.exceptions.NoImageException;
 import it.polimi.tiw.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +31,7 @@ public class OtherDAOTest extends BaseDB {
      * $. Add other image to other album
      * 8. Get images of that album with negative page
      * 9. Get images of that album with too high page
+     * 9.1 Get images of that album with wrong userId
      * 10. Get first page of images of that album
      * 11. Create a comment with a non-existing user
      * 12. Create a comment with a non-existing image
@@ -136,17 +137,20 @@ public class OtherDAOTest extends BaseDB {
         assertDoesNotThrow(() -> albumDAO.addImageToAlbum(otherUserId, otherImageId, otherAlbumId));
 
         // 8
-        assertThrows(SQLException.class, () -> albumDAO.getImages(userId, albumId, -1));
+        assertThrows(SQLException.class, () -> albumDAO.getImages(albumId, -1));
 
         // 9
-        assertThrows(NoImageException.class, () -> albumDAO.getImages(userId, albumId, 1));
+        assertDoesNotThrow(() -> assertEquals(0, albumDAO.getImages(albumId, 1).size()));
+
+        // 9.2
+        assertThrows(AlbumNotExistsException.class, () -> albumDAO.getImages(-1, 1));
 
         List<Image> images;
 
         // 10
         try {
-            images = albumDAO.getImages(userId, albumId, 0);
-        } catch (SQLException | NoImageException e) {
+            images = albumDAO.getImages(albumId, 0);
+        } catch (Exception e) {
             e.printStackTrace();
             assert false;
             return;

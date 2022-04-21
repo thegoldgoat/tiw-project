@@ -27,5 +27,8 @@
     <filter-mapping>
         <filter-name>UserLogged</filter-name>
         <url-pattern>/home</url-pattern>
+        <url-pattern>/album</url-pattern>
+        <url-pattern>/image</url-pattern>
+        <url-pattern>/imageraw</url-pattern>
     </filter-mapping>
 </web-app>

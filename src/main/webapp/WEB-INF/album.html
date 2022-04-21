@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="us-US">
+<head>
+    <title>Album</title>
+</head>
+<body>
+<h1>Welcome to the Album Page</h1>
+
+<a th:href="@{/logout}">Logout</a>
+
+
+<h3>Images in this album:</h3>
+
+<div th:each="image : ${images}">
+    <a th:href="@{/image?imagePk={imageId}(imageId=${image.imagePk})}">
+        <img th:src="@{/imagesraw/{imageId}(imageId=${image.imagePK})}">
+    </a>
+    <div th:text="${image.title}"> Image Title</div>
+    <div th:text="${image.date}">Image Date</div>
+</div>
+
+</body>
+</html>

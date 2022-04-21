@@ -14,7 +14,7 @@
 <h3>Your Albums:</h3>
 
 <div th:each="album : ${userAlbums}">
-    <a th:text="${album.title}" th:href="@{/album/{albumId}(albumId=${album.albumPk})}">Title</a>
+    <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
     <div th:text="${album.date}">Date</div>
     <div th:text="${album.userFk}">UserFk</div>
 </div>
@@ -22,7 +22,7 @@
 <h3>Other Users Albums:</h3>
 
 <div th:each="album : ${otherUsersAlbums}">
-    <a th:text="${album.title}" th:href="@{/album/{albumId}(albumId=${album.albumPk})}">Title</a>
+    <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
     <div th:text="${album.date}">Date</div>
     <div th:text="${album.userFk}">UserFk</div>
 </div>

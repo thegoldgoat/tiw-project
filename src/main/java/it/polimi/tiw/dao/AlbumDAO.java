@@ -3,8 +3,8 @@ package it.polimi.tiw.dao;
 import it.polimi.tiw.beans.Album;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Image;
+import it.polimi.tiw.exceptions.AlbumNotExistsException;
 import it.polimi.tiw.exceptions.InvalidOperationException;
-import it.polimi.tiw.exceptions.NoImageException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -123,34 +123,42 @@ public class AlbumDAO extends DAO {
     /**
      * Return at most 5 images inside AlbumFk album
      *
-     * @param UserFk  ID of the owner of the album/Images
      * @param AlbumFk ID of the album
      * @param page    page of images, first page is 0
      * @return List of images inside that page of the album
      * @throws SQLException     SQL library internal exception
-     * @throws NoImageException No images where found.
-     *                          * Maybe AlbumFk is now owned by UserFk?
-     *                          AlbumFk does not exist?
+     * @throws AlbumNotExistsException Album does not exist
      */
-    public List<Image> getImages(int UserFk, int AlbumFk, int page) throws SQLException, NoImageException {
+    public List<Image> getImages(int AlbumFk, int page) throws SQLException, AlbumNotExistsException {
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 
+        String checkQuery = """
+                SELECT * FROM Album
+                WHERE AlbumPk = ?
+                """;
+
+        PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
+        checkStatement.setInt(1, AlbumFk);
+        ResultSet checkResultSet = checkStatement.executeQuery();
+
+        if (!checkResultSet.next()) {
+            throw new AlbumNotExistsException(AlbumFk);
+        }
+
         String query = """
                 SELECT * FROM Image I, ImageAlbum IA, Album A
-                WHERE A.UserFk = ? AND A.AlbumPk = ?
+                WHERE A.AlbumPk = ?
                 AND A.AlbumPk = IA.AlbumFk
                 AND I.ImagePk = IA.ImageFk
                 ORDER BY I.date DESC
                 LIMIT ?,?
                 """;
-
         PreparedStatement pStatement = connection.prepareStatement(query);
 
-        pStatement.setInt(1, UserFk);
-        pStatement.setInt(2, AlbumFk);
-        pStatement.setInt(3, countBegin);
-        pStatement.setInt(4, countEnd);
+        pStatement.setInt(1, AlbumFk);
+        pStatement.setInt(2, countBegin);
+        pStatement.setInt(3, countEnd);
 
         ResultSet resultSet = pStatement.executeQuery();
 
@@ -167,10 +175,6 @@ public class AlbumDAO extends DAO {
                     resultSet.getDate("date"),
                     resultSet.getInt("UserFk"),
                     resultSet.getInt("AlbumFk")));
-        }
-
-        if (images.size() == 0) {
-            throw new NoImageException();
         }
 
         return images;
