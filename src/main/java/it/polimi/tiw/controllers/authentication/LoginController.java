@@ -4,6 +4,7 @@ import it.polimi.tiw.exceptions.InvalidCredentialsException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +19,8 @@ public class LoginController extends BaseAuthController {
     protected TemplateEngine templateEngine;
 
     @Override
-    protected void extended_init() {
-        super.extended_init();
+    public void init() throws ServletException {
+        super.init();
 
         templateEngine = getTemplateEngine();
     }

@@ -6,6 +6,7 @@ import it.polimi.tiw.utils.ControllerUtils;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +19,8 @@ public class HomeController extends BaseTemplateServlet {
     AlbumDAO albumDAO;
 
     @Override
-    protected void extended_init_template() {
+    public void init() throws ServletException {
+        super.init();
         albumDAO = new AlbumDAO(connection);
     }
 

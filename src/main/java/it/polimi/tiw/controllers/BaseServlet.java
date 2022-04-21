@@ -39,11 +39,7 @@ public abstract class BaseServlet extends HttpServlet {
         }
 
         servletContextPath = getServletContext().getContextPath();
-
-        extended_init();
     }
-
-    protected void extended_init() {}
 
     public void destroy() {
         try {
@@ -53,11 +49,7 @@ public abstract class BaseServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        extended_destroy();
     }
-
-    protected void extended_destroy() {}
 
     /**
      * @param suffixPath suffix of the path you are trying to generate
