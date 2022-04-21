@@ -34,12 +34,11 @@ public class HomeController extends BaseTemplateServlet {
             return;
         }
 
-        System.out.println(allAlbums.getUserAlbums().get(0).getTitle());
-
         ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(req, res, servletContext, req.getLocale());
+        final WebContext ctx = createWebContext(req, res);
         ctx.setVariable("userAlbums", allAlbums.getUserAlbums());
         ctx.setVariable("otherUsersAlbums", allAlbums.getOtherUserAlbums());
-        templateEngine.process(templatePath, ctx, res.getWriter());
+
+        processTemplate(templatePath, templateEngine, ctx, res);
     }
 }

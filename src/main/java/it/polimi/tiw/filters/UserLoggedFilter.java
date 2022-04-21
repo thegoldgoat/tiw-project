@@ -21,7 +21,7 @@ public class UserLoggedFilter implements Filter {
 
         HttpSession s = req.getSession();
         if (s.isNew() || s.getAttribute("UserPk") == null) {
-            String loginPath = req.getServletContext().getContextPath() + "/index.html";
+            String loginPath = req.getServletContext().getContextPath() + "/login";
             res.sendRedirect(loginPath);
             return;
         }

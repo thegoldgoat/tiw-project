@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="us-US">
+<head>
+    <title>Login</title>
+</head>
+<body>
+<h1>Welcome to the Gallery Application!</h1>
+
+<p th:if="${msg}" th:text="${msg}"> Message </p>
+
+<form method="post">
+    <input type="text" placeholder="Username" name="username"/>
+    <input type="password" placeholder="Password" name="password"/>
+    <button type="submit" formaction="login">Login</button>
+    <button type="submit" formaction="register">Register</button>
+</form>
+
+</body>
+</html>

@@ -30,11 +30,11 @@ public class RegistrationController extends BaseAuthController {
             sendBadGateway(res);
             return;
         } catch (UsernameAlreadyUsedException e) {
-            res.sendRedirect(getRedirectURL("/register?msg=Username already taken"));
+            res.sendRedirect(getRedirectURL("/login?msg=Username+already+taken"));
             return;
         }
 
         req.getSession().setAttribute("UserPk", registeredId);
-        res.sendRedirect("/home");
+        res.sendRedirect(getRedirectURL("/home"));
     }
 }

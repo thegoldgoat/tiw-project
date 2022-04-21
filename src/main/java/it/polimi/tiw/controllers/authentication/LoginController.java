@@ -1,6 +1,8 @@
 package it.polimi.tiw.controllers.authentication;
 
 import it.polimi.tiw.exceptions.InvalidCredentialsException;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,28 @@ import static it.polimi.tiw.utils.ControllerUtils.sendBadRequest;
 
 @WebServlet("/login")
 public class LoginController extends BaseAuthController {
+    protected TemplateEngine templateEngine;
+
+    @Override
+    protected void extended_init() {
+        super.extended_init();
+
+        templateEngine = getTemplateEngine();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (req.getSession().getAttribute("UserPk") != null) {
+            res.sendRedirect(getRedirectURL("/home"));
+        }
+
+        String msg = req.getParameter("msg");
+
+        WebContext ctx = createWebContext(req, res);
+
+        ctx.setVariable("msg", msg);
+        processTemplate("WEB-INF/login.html", templateEngine, ctx, res);
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -30,11 +54,11 @@ public class LoginController extends BaseAuthController {
             sendBadGateway(res);
             return;
         } catch (InvalidCredentialsException e) {
-            res.sendRedirect(getRedirectURL("/index?msg=Invalid Credentials"));
+            res.sendRedirect(getRedirectURL("/login?msg=Invalid+Credentials"));
             return;
         }
 
         req.getSession().setAttribute("UserPk", loggedId);
-        res.sendRedirect("/home");
+        res.sendRedirect(getRedirectURL("/home"));
     }
 }
