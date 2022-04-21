@@ -104,7 +104,7 @@ public class AlbumDAO extends DAO {
         return returnValues;
     }
 
-    AllAlbums getAllAlbums(int UserFk) throws SQLException {
+    public AllAlbums getAllAlbums(int UserFk) throws SQLException {
         String queryMyAlbums = """
                     SELECT * FROM Album
                     WHERE UserFk = ?

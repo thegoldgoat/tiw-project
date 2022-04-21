@@ -5,22 +5,20 @@ import lombok.Getter;
 import java.util.Date;
 
 public class Album {
-    @Getter
-    final private int albumPK;
+    @Getter private final int albumPK;
 
-    @Getter
-    final private String title;
-
-    @Getter
-    final private Date date;
-
-    @Getter
-    final private int userFk;
+    private final String title;
+    @Getter private final Date date;
+    @Getter private final int userFk;
 
     public Album(int albumPK, String title, Date date, int userFk) {
         this.albumPK = albumPK;
         this.title = title;
         this.date = date;
         this.userFk = userFk;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

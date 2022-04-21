@@ -20,4 +20,12 @@
         <param-name>dbDriver</param-name>
         <param-value>com.mysql.cj.jdbc.Driver</param-value>
     </context-param>
+    <filter>
+        <filter-name>UserLogged</filter-name>
+        <filter-class>it.polimi.tiw.filters.UserLoggedFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>UserLogged</filter-name>
+        <url-pattern>/home</url-pattern>
+    </filter-mapping>
 </web-app>
