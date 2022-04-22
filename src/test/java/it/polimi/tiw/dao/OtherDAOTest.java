@@ -5,7 +5,8 @@ import it.polimi.tiw.beans.Album;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Comment;
 import it.polimi.tiw.beans.Image;
-import it.polimi.tiw.exceptions.AlbumNotExistsException;
+import it.polimi.tiw.exceptions.AlbumNotFoundException;
+import it.polimi.tiw.exceptions.ImageNotFoundException;
 import it.polimi.tiw.exceptions.InvalidOperationException;
 import it.polimi.tiw.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ public class OtherDAOTest extends BaseDB {
      * 1. Register a new user
      * !. Register a second user
      * 2. Add an image
+     * 2.2 get that image with wrong ID
+     * 2.3 get that image
      * #. Add a second image
      * 3. Add an image with wrong user ID
      * 4. Add an album
@@ -87,6 +90,25 @@ public class OtherDAOTest extends BaseDB {
             return;
         }
 
+        // 2.2
+        assertThrows(ImageNotFoundException.class, () -> imageDAO.getImage(-1));
+
+        // 2.3
+        Image image;
+        try {
+            image = imageDAO.getImage(imageId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        assertEquals(imageId, image.getImagePK());
+        assertEquals(imgPath, image.getPath());
+        assertEquals(imgTitle, image.getTitle());
+        assertEquals(imgDesc, image.getDescription());
+        assertEquals(userId, image.getUserFK());
+
         int otherImageId;
         try {
             // #
@@ -143,7 +165,7 @@ public class OtherDAOTest extends BaseDB {
         assertDoesNotThrow(() -> assertEquals(0, albumDAO.getImages(albumId, 1).size()));
 
         // 9.2
-        assertThrows(AlbumNotExistsException.class, () -> albumDAO.getImages(-1, 1));
+        assertThrows(AlbumNotFoundException.class, () -> albumDAO.getImages(-1, 1));
 
         List<Image> images;
 

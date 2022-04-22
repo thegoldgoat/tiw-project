@@ -2,7 +2,7 @@ package it.polimi.tiw.controllers;
 
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.dao.AlbumDAO;
-import it.polimi.tiw.exceptions.AlbumNotExistsException;
+import it.polimi.tiw.exceptions.AlbumNotFoundException;
 import it.polimi.tiw.utils.ControllerUtils;
 
 import javax.servlet.ServletException;
@@ -48,7 +48,7 @@ public class AlbumController extends BaseTemplateServlet {
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
             return;
-        } catch (AlbumNotExistsException e) {
+        } catch (AlbumNotFoundException e) {
             ControllerUtils.sendBadRequest(res, "Album does not exist");
             return;
         }

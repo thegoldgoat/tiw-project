@@ -32,6 +32,10 @@ public class ControllerUtils {
         res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
+    public static void sendNotFound(HttpServletResponse res, String msg) throws IOException {
+        res.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
+    }
+
     public static void sendNotFound(HttpServletResponse res) throws IOException {
         res.sendError(HttpServletResponse.SC_NOT_FOUND);
     }

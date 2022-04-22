@@ -13,7 +13,7 @@
 
 <div th:each="image : ${images}">
     <a th:href="@{/image?imagePk={imageId}(imageId=${image.imagePk})}">
-        <img th:src="@{/imagesraw/{imageId}(imageId=${image.imagePK})}">
+        <img th:src="@{/imagesraw/{imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
     </a>
     <div th:text="${image.title}"> Image Title</div>
     <div th:text="${image.date}">Image Date</div>

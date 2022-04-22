@@ -3,7 +3,7 @@ package it.polimi.tiw.dao;
 import it.polimi.tiw.beans.Album;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Image;
-import it.polimi.tiw.exceptions.AlbumNotExistsException;
+import it.polimi.tiw.exceptions.AlbumNotFoundException;
 import it.polimi.tiw.exceptions.InvalidOperationException;
 
 import java.sql.*;
@@ -127,9 +127,9 @@ public class AlbumDAO extends DAO {
      * @param page    page of images, first page is 0
      * @return List of images inside that page of the album
      * @throws SQLException     SQL library internal exception
-     * @throws AlbumNotExistsException Album does not exist
+     * @throws AlbumNotFoundException Album does not exist
      */
-    public List<Image> getImages(int AlbumFk, int page) throws SQLException, AlbumNotExistsException {
+    public List<Image> getImages(int AlbumFk, int page) throws SQLException, AlbumNotFoundException {
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 
@@ -143,7 +143,7 @@ public class AlbumDAO extends DAO {
         ResultSet checkResultSet = checkStatement.executeQuery();
 
         if (!checkResultSet.next()) {
-            throw new AlbumNotExistsException(AlbumFk);
+            throw new AlbumNotFoundException(AlbumFk);
         }
 
         String query = """
@@ -173,8 +173,7 @@ public class AlbumDAO extends DAO {
                     resultSet.getString("description"),
                     resultSet.getString("path"),
                     resultSet.getDate("date"),
-                    resultSet.getInt("UserFk"),
-                    resultSet.getInt("AlbumFk")));
+                    resultSet.getInt("UserFk")));
         }
 
         return images;

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="us-US">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<h1>Welcome to the Image Page</h1>
+
+<a th:href="@{/logout}">Logout</a>
+
+<img th:src="@{/imagesraw/{imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
+
+<div th:each="comment : ${comments}">
+    <div th:text="${comment.username}">Username</div>
+    <div th:text="${comment.text}">Text</div>
+</div>
+
+</body>
+</html>

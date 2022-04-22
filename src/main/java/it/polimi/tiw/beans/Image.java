@@ -5,30 +5,22 @@ import lombok.Getter;
 import java.util.Date;
 
 public class Image {
-    @Getter
-    final private int ImagePK;
+    @Getter private final int ImagePK;
 
-    @Getter
-    final private String title;
-    @Getter
-    final private String description;
-    @Getter
-    final private String path;
-    @Getter
-    final private Date date;
+    @Getter private final String title;
+    @Getter private final String description;
+    @Getter private final String path;
+    @Getter private final Date date;
 
-    @Getter
-    final private int userFK;
-    @Getter
-    final private int albumFk;
+    @Getter private final int userFK;
 
-    public Image(int imagePK, String title, String description, String path, Date date, int userFK, int albumFk) {
+    public Image(
+            int imagePK, String title, String description, String path, Date date, int userFK) {
         ImagePK = imagePK;
         this.title = title;
         this.description = description;
         this.path = path;
         this.date = date;
         this.userFK = userFK;
-        this.albumFk = albumFk;
     }
 }
