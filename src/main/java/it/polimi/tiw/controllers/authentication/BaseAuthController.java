@@ -7,7 +7,7 @@ import it.polimi.tiw.utils.ControllerUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class BaseAuthController extends BaseServlet {
+abstract class BaseAuthController extends BaseServlet {
 
     protected static final String MISSING_CREDENTIAL_MESSAGE = "Missing credentials in request";
 

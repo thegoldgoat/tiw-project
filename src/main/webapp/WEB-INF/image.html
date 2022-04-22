@@ -8,7 +8,7 @@
 
 <a th:href="@{/logout}">Logout</a>
 
-<img th:src="@{/imagesraw/{imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
+<img th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
 
 <div th:each="comment : ${comments}">
     <div th:text="${comment.username}">Username</div>
