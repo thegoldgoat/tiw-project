@@ -5,11 +5,12 @@ import lombok.Getter;
 import java.util.List;
 
 public class AllAlbums {
-    @Getter private final List<Album> userAlbums;
+    @Getter private final List<AlbumWithOwnerName> userAlbums;
 
-    @Getter private final List<Album> otherUserAlbums;
+    @Getter private final List<AlbumWithOwnerName> otherUserAlbums;
 
-    public AllAlbums(List<Album> userAlbums, List<Album> otherUserAlbums) {
+    public AllAlbums(
+            List<AlbumWithOwnerName> userAlbums, List<AlbumWithOwnerName> otherUserAlbums) {
         this.userAlbums = userAlbums;
         this.otherUserAlbums = otherUserAlbums;
     }

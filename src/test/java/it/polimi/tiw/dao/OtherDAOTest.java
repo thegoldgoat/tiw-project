@@ -1,7 +1,7 @@
 package it.polimi.tiw.dao;
 
 import it.polimi.tiw.BaseDB;
-import it.polimi.tiw.beans.Album;
+import it.polimi.tiw.beans.AlbumWithOwnerName;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Comment;
 import it.polimi.tiw.beans.Image;
@@ -230,21 +230,23 @@ public class OtherDAOTest extends BaseDB {
             assert false;
             return;
         }
-        List<Album> userAlbums = allAlbums.getUserAlbums();
-        List<Album> otherUserAlbums = allAlbums.getOtherUserAlbums();
+        List<AlbumWithOwnerName> userAlbums = allAlbums.getUserAlbums();
+        List<AlbumWithOwnerName> otherUserAlbums = allAlbums.getOtherUserAlbums();
 
         assertEquals(1, userAlbums.size());
         assertEquals(1, otherUserAlbums.size());
 
-        Album userAlbum = userAlbums.get(0);
+        AlbumWithOwnerName userAlbum = userAlbums.get(0);
         assertEquals(albumId, userAlbum.getAlbumPk());
         assertEquals(userId, userAlbum.getUserFk());
         assertEquals(albumTitle, userAlbum.getTitle());
+        assertEquals(username, userAlbum.getOwnerUsername());
 
-        Album otherUserAlbum = otherUserAlbums.get(0);
+        AlbumWithOwnerName otherUserAlbum = otherUserAlbums.get(0);
         assertEquals(otherAlbumId, otherUserAlbum.getAlbumPk());
         assertEquals(otherUserId, otherUserAlbum.getUserFk());
         assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
+        assertEquals(otherUsername, otherUserAlbum.getOwnerUsername());
 
         // 16
         try {
@@ -265,10 +267,12 @@ public class OtherDAOTest extends BaseDB {
         assertEquals(albumId, userAlbum.getAlbumPk());
         assertEquals(userId, userAlbum.getUserFk());
         assertEquals(albumTitle, userAlbum.getTitle());
+        assertEquals(username, userAlbum.getOwnerUsername());
 
         otherUserAlbum = otherUserAlbums.get(0);
         assertEquals(otherAlbumId, otherUserAlbum.getAlbumPk());
         assertEquals(otherUserId, otherUserAlbum.getUserFk());
         assertEquals(otherAlbumTitle, otherUserAlbum.getTitle());
+        assertEquals(otherUsername, otherUserAlbum.getOwnerUsername());
     }
 }

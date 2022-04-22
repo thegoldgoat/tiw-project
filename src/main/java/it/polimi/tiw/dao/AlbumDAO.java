@@ -1,6 +1,6 @@
 package it.polimi.tiw.dao;
 
-import it.polimi.tiw.beans.Album;
+import it.polimi.tiw.beans.AlbumWithOwnerName;
 import it.polimi.tiw.beans.AllAlbums;
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.exceptions.AlbumNotFoundException;
@@ -84,20 +84,21 @@ public class AlbumDAO extends DAO {
         pStatement.executeUpdate();
     }
 
-    private List<Album> getAllAlbumsFromQuery(String query, int userId) throws SQLException {
+    private List<AlbumWithOwnerName> getAllAlbumsFromQuery(String query, int userId) throws SQLException {
         PreparedStatement pStatement = connection.prepareStatement(query);
 
         pStatement.setInt(1, userId);
 
         ResultSet resultSet = pStatement.executeQuery();
 
-        List<Album> returnValues = new ArrayList<>();
+        List<AlbumWithOwnerName> returnValues = new ArrayList<>();
         while (resultSet.next()) {
-            returnValues.add(new Album(
+            returnValues.add(new AlbumWithOwnerName(
                     resultSet.getInt("AlbumPk"),
                     resultSet.getString("title"),
                     resultSet.getDate("date"),
-                    resultSet.getInt("UserFk")
+                    resultSet.getInt("UserFk"),
+                    resultSet.getString("username")
             ));
         }
 
@@ -106,16 +107,16 @@ public class AlbumDAO extends DAO {
 
     public AllAlbums getAllAlbums(int UserFk) throws SQLException {
         String queryMyAlbums = """
-                    SELECT * FROM Album
-                    WHERE UserFk = ?
+                    SELECT A.*, U.username FROM Album A, User U
+                    WHERE UserFk = ? AND A.UserFk = U.UserPk
                 """;
 
         String queryOtherAlbums = """
-                    SELECT * FROM Album
-                    WHERE UserFk != ?
+                    SELECT A.*, U.username FROM Album A, User U
+                    WHERE A.UserFk != ? AND A.UserFk = U.UserPk
                 """;
-        List<Album> userAlbums = getAllAlbumsFromQuery(queryMyAlbums, UserFk);
-        List<Album> otherUsersAlbums = getAllAlbumsFromQuery(queryOtherAlbums, UserFk);
+        List<AlbumWithOwnerName> userAlbums = getAllAlbumsFromQuery(queryMyAlbums, UserFk);
+        List<AlbumWithOwnerName> otherUsersAlbums = getAllAlbumsFromQuery(queryOtherAlbums, UserFk);
 
         return new AllAlbums(userAlbums, otherUsersAlbums);
     }
