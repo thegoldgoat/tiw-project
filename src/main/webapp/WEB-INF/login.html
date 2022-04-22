@@ -2,18 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="us-US">
 <head>
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<h1>Welcome to the Gallery Application!</h1>
 
-<p th:if="${msg}" th:text="${msg}"> Message </p>
 
-<form method="post">
-    <input type="text" placeholder="Username" name="username"/>
-    <input type="password" placeholder="Password" name="password"/>
-    <button type="submit" formaction="login">Login</button>
-    <button type="submit" formaction="register">Register</button>
-</form>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Gallery - Show your images</a>
+    </div>
+</nav>
 
+<div class="container">
+
+    <div th:if="${msg}" class="alert alert-dismissible alert-danger" style="margin-top: 4em;">
+        <strong th:text="${msg}"> Message </strong>
+    </div>
+
+
+    <form method="post">
+        <fieldset>
+            <div class="form-group">
+                <label for="username" class="form-label mt-4">Username</label>
+                <input type="text" class="form-control" id="username" aria-describedby="username"
+                       placeholder="Enter username" name="username">
+
+                <label for="password" class="form-label mt-4">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+            </div>
+
+
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-primary" type="submit" formaction="login">Login</button>
+                <button class="btn btn-primary" type="submit" formaction="register">Register</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
 </body>
 </html>
