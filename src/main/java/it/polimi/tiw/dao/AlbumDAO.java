@@ -2,9 +2,11 @@ package it.polimi.tiw.dao;
 
 import it.polimi.tiw.beans.AlbumWithOwnerName;
 import it.polimi.tiw.beans.AllAlbums;
+import it.polimi.tiw.beans.AllImages;
 import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.exceptions.AlbumNotFoundException;
 import it.polimi.tiw.exceptions.InvalidOperationException;
+import it.polimi.tiw.exceptions.PageOutOfBoundException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -130,21 +132,51 @@ public class AlbumDAO extends DAO {
      * @throws SQLException     SQL library internal exception
      * @throws AlbumNotFoundException Album does not exist
      */
-    public List<Image> getImages(int AlbumFk, int page) throws SQLException, AlbumNotFoundException {
+    public AllImages getImages(int AlbumFk, int page) throws SQLException, AlbumNotFoundException, PageOutOfBoundException {
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 
-        String checkQuery = """
+        String checkAlbumExistQuery = """
                 SELECT * FROM Album
                 WHERE AlbumPk = ?
                 """;
 
-        PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
+        PreparedStatement checkStatement = connection.prepareStatement(checkAlbumExistQuery);
         checkStatement.setInt(1, AlbumFk);
         ResultSet checkResultSet = checkStatement.executeQuery();
 
         if (!checkResultSet.next()) {
             throw new AlbumNotFoundException(AlbumFk);
+        }
+
+        String imageCountQuery = """
+                SELECT Count(*) AS ImageCount From ImageAlbum
+                WHERE AlbumFk = ?
+                """;
+
+        PreparedStatement imageCountStatement = connection.prepareStatement(imageCountQuery);
+        imageCountStatement.setInt(1, AlbumFk);
+
+        ResultSet imageCountResult = imageCountStatement.executeQuery();
+
+        if (!imageCountResult.next()) {
+            throw new RuntimeException("Why we are not able to count?");
+        }
+
+        int imageCount = imageCountResult.getInt("ImageCount");
+
+        if (imageCount == 0) {
+            if (page == 0) {
+                return new AllImages(List.of(), 0, 0);
+            } else {
+                throw new PageOutOfBoundException();
+            }
+        }
+        int pageCount = (int) Math.ceil((float) imageCount / PAGE_SIZE);
+
+        // Page is 0-indexed, so if page == pageCount we are viewing an empty page
+        if (page >= pageCount) {
+            throw new PageOutOfBoundException();
         }
 
         String query = """
@@ -177,6 +209,6 @@ public class AlbumDAO extends DAO {
                     resultSet.getInt("UserFk")));
         }
 
-        return images;
+        return new AllImages(images, pageCount, page);
     }
 }

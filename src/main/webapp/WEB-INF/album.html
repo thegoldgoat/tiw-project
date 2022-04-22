@@ -50,6 +50,33 @@
             </div>
         </div>
     </div>
+
+    <ul th:if="${pageCount > 0}"
+        class="pagination justify-content-center mt-3"
+    >
+        <li th:classappend="${currentPage == 0} ? disabled" class="page-item">
+            <a class="page-link" th:href="@{/album?albumPk=} + ${albumPk} + '&page=' + ${currentPage - 1}" href="#">
+                Previous
+            </a>
+        </li>
+        <li th:each="pageIt : ${pageIterator}"
+            th:classappend="${pageIt == currentPage} ? active"
+            class="page-item"
+        >
+            <a
+                    th:href="@{/album?albumPk=} + ${albumPk} + '&page=' + ${pageIt}"
+                    th:text="${pageIt + 1}"
+                    class="page-link" href="#"
+            >
+                123
+            </a>
+        </li>
+        <li th:classappend="${currentPage == pageCount - 1} ? disabled" class="page-item">
+            <a class="page-link" th:href="@{/album?albumPk=} + ${albumPk} + '&page=' + ${currentPage + 1}" href="#">
+                Next
+            </a>
+        </li>
+    </ul>
 </div>
 
 

@@ -1,14 +1,8 @@
 package it.polimi.tiw.dao;
 
 import it.polimi.tiw.BaseDB;
-import it.polimi.tiw.beans.AlbumWithOwnerName;
-import it.polimi.tiw.beans.AllAlbums;
-import it.polimi.tiw.beans.Comment;
-import it.polimi.tiw.beans.Image;
-import it.polimi.tiw.exceptions.AlbumNotFoundException;
-import it.polimi.tiw.exceptions.ImageNotFoundException;
-import it.polimi.tiw.exceptions.InvalidOperationException;
-import it.polimi.tiw.exceptions.UserNotFoundException;
+import it.polimi.tiw.beans.*;
+import it.polimi.tiw.exceptions.*;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -34,7 +28,9 @@ public class OtherDAOTest extends BaseDB {
      * $. Add other image to other album
      * 8. Get images of that album with negative page
      * 9. Get images of that album with too high page
-     * 9.1 Get images of that album with wrong userId
+     * 9.1 Get images of that album with wrong albumId
+     * 9.2 Create an empty album and get its images
+     * 9.3 get images from empty album with too high page
      * 10. Get first page of images of that album
      * 11. Create a comment with a non-existing user
      * 12. Create a comment with a non-existing image
@@ -59,6 +55,8 @@ public class OtherDAOTest extends BaseDB {
         final String otherImgTitle = "Other Image Title";
         final String otherImgDesc = "Other Image Description";
         final String otherImgPath = "Other Image Path";
+
+        final String tempAlbumTitle = "Temp Album Title";
 
         int userId;
         try {
@@ -162,16 +160,42 @@ public class OtherDAOTest extends BaseDB {
         assertThrows(SQLException.class, () -> albumDAO.getImages(albumId, -1));
 
         // 9
-        assertDoesNotThrow(() -> assertEquals(0, albumDAO.getImages(albumId, 1).size()));
+        assertThrows(PageOutOfBoundException.class, () -> albumDAO.getImages(albumId, 1));
+
+        // 9.1
+        assertThrows(AlbumNotFoundException.class, () -> albumDAO.getImages(-1, 1));
 
         // 9.2
-        assertThrows(AlbumNotFoundException.class, () -> albumDAO.getImages(-1, 1));
+        int tempAlbumId;
+        try {
+            tempAlbumId = albumDAO.addNewAlbum(userId, tempAlbumTitle);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            assert false;
+            return;
+        }
+
+        assertDoesNotThrow(
+                () -> {
+                    AllImages tempAllImages = albumDAO.getImages(tempAlbumId, 0);
+                    assertEquals(0, tempAllImages.getImages().size());
+                    assertEquals(0, tempAllImages.getCurrentPage());
+                    assertEquals(0, tempAllImages.getPageCount());
+                });
+
+        // 9.3
+        assertThrows(PageOutOfBoundException.class, () -> albumDAO.getImages(tempAlbumId, 1));
 
         List<Image> images;
 
         // 10
         try {
-            images = albumDAO.getImages(albumId, 0);
+            AllImages allImages = albumDAO.getImages(albumId, 0);
+
+            assertEquals(0, allImages.getCurrentPage());
+            assertEquals(1, allImages.getPageCount());
+
+            images = allImages.getImages();
         } catch (Exception e) {
             e.printStackTrace();
             assert false;
@@ -233,7 +257,8 @@ public class OtherDAOTest extends BaseDB {
         List<AlbumWithOwnerName> userAlbums = allAlbums.getUserAlbums();
         List<AlbumWithOwnerName> otherUserAlbums = allAlbums.getOtherUserAlbums();
 
-        assertEquals(1, userAlbums.size());
+        // AlbumId + testAlbumId
+        assertEquals(2, userAlbums.size());
         assertEquals(1, otherUserAlbums.size());
 
         AlbumWithOwnerName userAlbum = userAlbums.get(0);
@@ -260,7 +285,8 @@ public class OtherDAOTest extends BaseDB {
         otherUserAlbums = allAlbums.getUserAlbums();
         userAlbums = allAlbums.getOtherUserAlbums();
 
-        assertEquals(1, userAlbums.size());
+        // AlbumId + testAlbumId
+        assertEquals(2, userAlbums.size());
         assertEquals(1, otherUserAlbums.size());
 
         userAlbum = userAlbums.get(0);
