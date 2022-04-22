@@ -5,6 +5,7 @@ import it.polimi.tiw.dao.ImageDAO;
 import it.polimi.tiw.exceptions.ImageNotFoundException;
 import it.polimi.tiw.utils.ControllerUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +20,14 @@ import java.sql.SQLException;
 public class ImageRawController extends BaseServlet {
     ImageDAO imageDAO;
 
+    String imagesBasePath;
+
     @Override
     public void init() throws ServletException {
         super.init();
+
+        ServletContext context = getServletContext();
+        imagesBasePath = context.getInitParameter("imagesBasePath");
 
         imageDAO = new ImageDAO(connection);
     }
@@ -48,7 +54,7 @@ public class ImageRawController extends BaseServlet {
         }
 
         try {
-            File inputFile = new File(image.getPath());
+            File inputFile = new File(imagesBasePath + image.getPath());
             FileInputStream fileStream = new FileInputStream(inputFile);
 
             OutputStream os = res.getOutputStream();
