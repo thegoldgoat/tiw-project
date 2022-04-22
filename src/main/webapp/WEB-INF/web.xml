@@ -30,5 +30,6 @@
         <url-pattern>/album</url-pattern>
         <url-pattern>/image</url-pattern>
         <url-pattern>/imageraw</url-pattern>
+        <url-pattern>/comment</url-pattern>
     </filter-mapping>
 </web-app>

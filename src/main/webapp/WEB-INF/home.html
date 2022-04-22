@@ -8,9 +8,6 @@
 
 <a th:href="@{/logout}">Logout</a>
 
-<span th:text="${userAlbums}">User Albums</span>
-<span th:text="${otherUsersAlbums}">Other Users Albums</span>
-
 <h3>Your Albums:</h3>
 
 <div th:each="album : ${userAlbums}">

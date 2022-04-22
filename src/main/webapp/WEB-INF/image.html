@@ -15,5 +15,11 @@
     <div th:text="${comment.text}">Text</div>
 </div>
 
+<form method="post" th:action="@{/comment}">
+    <input type="text" placeholder="Comment Body" name="text"/>
+    <input type="hidden" name="imagePk" th:value="${image.imagePK}"/>
+    <input type="submit"/>
+</form>
+
 </body>
 </html>
