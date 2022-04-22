@@ -2,26 +2,74 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="us-US">
 <head>
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<h1>Welcome to the Home Page</h1>
 
-<a th:href="@{/logout}">Logout</a>
 
-<h3>Your Albums:</h3>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Home Page</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<div th:each="album : ${userAlbums}">
-    <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
-    <div th:text="${album.date}">Date</div>
-    <div th:text="${album.ownerUsername}">Owner Username</div>
-</div>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <div class="navbar-nav me-auto">
+            </div>
+            <a th:href="@{/logout}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</nav>
 
-<h3>Other Users Albums:</h3>
+<div class="container">
 
-<div th:each="album : ${otherUsersAlbums}">
-    <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
-    <div th:text="${album.date}">Date</div>
-    <div th:text="${album.ownerUsername}">Owner Username</div>
+    <div class="page-header" style="margin-top: 4em;">
+        <h3>Your Albums:</h3>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Date</th>
+            <th scope="col">Owner</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="album : ${userAlbums}">
+            <th scope="row">
+                <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
+            </th>
+            <td th:text="${album.date}">Date</td>
+            <td th:text="${album.ownerUsername}">Owner Username</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="page-header" style="margin-top: 4em;">
+        <h3>Other Users Albums:</h3>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Date</th>
+            <th scope="col">Owner</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="album : ${otherUsersAlbums}">
+            <th scope="row">
+                <a th:text="${album.title}" th:href="@{/album?albumPk={albumId}(albumId=${album.albumPk})}">Title</a>
+            </th>
+            <td th:text="${album.date}">Date</td>
+            <td th:text="${album.ownerUsername}">Owner Username</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>
