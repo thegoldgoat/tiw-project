@@ -39,7 +39,7 @@ public class AlbumController extends BaseTemplateServlet {
         }
         try {
             page = Integer.parseInt(req.getParameter("page"));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             page = 0;
         }
 

@@ -133,6 +133,10 @@ public class AlbumDAO extends DAO {
      * @throws AlbumNotFoundException Album does not exist
      */
     public AllImages getImages(int AlbumFk, int page) throws SQLException, AlbumNotFoundException, PageOutOfBoundException {
+        if (page < 0) {
+            throw new PageOutOfBoundException();
+        }
+
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 

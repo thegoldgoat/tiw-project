@@ -157,7 +157,7 @@ public class OtherDAOTest extends BaseDB {
         assertDoesNotThrow(() -> albumDAO.addImageToAlbum(otherUserId, otherImageId, otherAlbumId));
 
         // 8
-        assertThrows(SQLException.class, () -> albumDAO.getImages(albumId, -1));
+        assertThrows(PageOutOfBoundException.class, () -> albumDAO.getImages(albumId, -1));
 
         // 9
         assertThrows(PageOutOfBoundException.class, () -> albumDAO.getImages(albumId, 1));
