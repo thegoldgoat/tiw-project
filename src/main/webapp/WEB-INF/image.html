@@ -1,25 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="us-US">
 <head>
-    <title>Home</title>
+    <title th:text="${image.title}">Image</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<h1>Welcome to the Image Page</h1>
 
-<a th:href="@{/logout}">Logout</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Image Page</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<img th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <div class="navbar-nav me-auto">
+            </div>
+            <a th:href="@{/logout}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</nav>
 
-<div th:each="comment : ${comments}">
-    <div th:text="${comment.username}">Username</div>
-    <div th:text="${comment.text}">Text</div>
+<div class="container">
+    <h2
+            th:text="${image.title}"
+            class="mt-4"
+    >
+        Image-Title
+    </h2>
+    <div class="row justify-content-center mt-4 mb-4">
+        <img
+                th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}"
+                th:alt="${image.title}"
+                src="../../../../docs/db_imgs/3.jpg"
+                alt="Image"
+                class="col-auto"
+        />
+    </div>
+
+    <h2>Comments:</h2>
+
+    <div
+            th:each="comment : ${comments}"
+            class="row justify-content-center mb-3"
+    >
+        <div class="col">
+
+            <div class="card">
+                <h3 th:text="${comment.username}" class="card-header">Username</h3>
+                <div
+                        class="card-body"
+                >
+                    <p th:text="${comment.text}">Text</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+    <h2>Write a comment</h2>
+
+    <form method="post" th:action="@{/comment}">
+        <fieldset>
+            <div class="form-group">
+                <label for="comment" class="form-label mt-4">Comment</label>
+                <input type="text" class="form-control" id="comment" aria-describedby="comment"
+                       placeholder="Write your comment" name="text">
+                <input type="hidden" name="imagePk" th:value="${image.imagePK}"/>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
 </div>
-
-<form method="post" th:action="@{/comment}">
-    <input type="text" placeholder="Comment Body" name="text"/>
-    <input type="hidden" name="imagePk" th:value="${image.imagePK}"/>
-    <input type="submit"/>
-</form>
 
 </body>
 </html>
