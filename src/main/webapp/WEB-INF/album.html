@@ -2,22 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="us-US">
 <head>
     <title>Album</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<h1>Welcome to the Album Page</h1>
-
-<a th:href="@{/logout}">Logout</a>
 
 
-<h3>Images in this album:</h3>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Album Page</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<div th:each="image : ${images}">
-    <a th:href="@{/image?imagePk={imageId}(imageId=${image.imagePk})}">
-        <img th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}" th:alt="${image.title}">
-    </a>
-    <div th:text="${image.title}"> Image Title</div>
-    <div th:text="${image.date}">Image Date</div>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <div class="navbar-nav me-auto">
+            </div>
+            <a th:href="@{/logout}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-3">
+    <div class="row justify-content-around gy-3">
+        <div th:each="image : ${images}" class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card">
+                <h3 th:text="${image.title}" class="card-header">Image Title</h3>
+                <div class="card-body">
+                    <h5 th:text="${image.description}" class="card-title">Image Description</h5>
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <a th:href="@{/image?imagePk={imageId}(imageId=${image.imagePk})}">
+                                <img th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}"
+                                     th:alt="${image.title}"
+                                     src="../../../../docs/db_imgs/3.jpg"
+                                     alt="Image"
+                                     class="img-thumbnail"
+                                     style="height: 200px;"
+                                >
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div th:text="${image.date}" class="card-footer text-muted">
+                    Date
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 </body>
 </html>
