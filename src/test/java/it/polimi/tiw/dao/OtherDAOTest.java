@@ -41,6 +41,7 @@ public class OtherDAOTest extends BaseDB {
      */
     @Test
     void bigTest() {
+        final String email = "test@example.net";
         final String username = "testuser";
         final String password = "testpassword";
         final String imgTitle = "Test Image Title";
@@ -49,6 +50,7 @@ public class OtherDAOTest extends BaseDB {
         final String albumTitle = "Test Album Title";
         final String commentText = "Hello this is a comment :)";
 
+        final String otherEmail = "other@example.net";
         final String otherUsername = "other";
         final String otherPassword = "other";
         final String otherAlbumTitle = "Other Album Title";
@@ -61,7 +63,7 @@ public class OtherDAOTest extends BaseDB {
         int userId;
         try {
             // 1
-            userId = userDAO.register(username, password);
+            userId = userDAO.register(email, username, password);
         } catch (Exception e) {
             e.printStackTrace();
             assert false;
@@ -70,7 +72,7 @@ public class OtherDAOTest extends BaseDB {
 
         int otherUserId;
         try {
-            otherUserId = userDAO.register(otherUsername, otherPassword);
+            otherUserId = userDAO.register(otherEmail, otherUsername, otherPassword);
         } catch (Exception e) {
             e.printStackTrace();
             assert false;

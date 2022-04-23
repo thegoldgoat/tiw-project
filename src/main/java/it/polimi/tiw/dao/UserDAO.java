@@ -2,6 +2,7 @@ package it.polimi.tiw.dao;
 
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.exceptions.InvalidCredentialsException;
+import it.polimi.tiw.exceptions.InvalidEmailException;
 import it.polimi.tiw.exceptions.UsernameAlreadyUsedException;
 
 import java.sql.*;
@@ -43,14 +44,30 @@ public class UserDAO extends DAO {
     }
 
     /**
+     * @param email email of the user
      * @param username username of the user
      * @param password password of the user
      * @return UserPk of the new user, if registered correctly
      * @throws SQLException SQL library internal exception
-     * @throws UsernameAlreadyUsedException There already exists an user with this username.
+     * @throws UsernameAlreadyUsedException There already exists an user with this username
+     * @throws InvalidEmailException email format is not valid
      */
-    public int register(String username, String password)
-            throws SQLException, UsernameAlreadyUsedException {
+    public int register(String email, String username, String password)
+            throws SQLException, UsernameAlreadyUsedException, InvalidEmailException {
+
+        /*
+         * 1. word with any letter, number, dot, underscore, plus, minus
+         * 2. hat
+         * 3. word with any letter, number, minus, dot
+         * 4. dor
+         * 5. word with any letter, number
+         */
+        final String emailCheckRegex = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9-.]+\\.+[a-zA-Z0-9]+$";
+
+        if (!email.matches(emailCheckRegex)) {
+            throw new InvalidEmailException();
+        }
+
         String queryCheckUsername = "SELECT UserPk FROM User WHERE username = ?";
 
         PreparedStatement pStatement1 = connection.prepareStatement(queryCheckUsername);
@@ -63,15 +80,16 @@ public class UserDAO extends DAO {
             throw new UsernameAlreadyUsedException(username);
         }
 
-        String queryInsert = "INSERT INTO User (username, password) VALUES (?, ?)";
+        String queryInsert = "INSERT INTO User (email, username, password) VALUES (?, ?, ?)";
 
         String hashedPassword = User.hashPassword(password);
 
         PreparedStatement pStatement2 =
                 connection.prepareStatement(queryInsert, Statement.RETURN_GENERATED_KEYS);
 
-        pStatement2.setString(1, username);
-        pStatement2.setString(2, hashedPassword);
+        pStatement2.setString(1, email);
+        pStatement2.setString(2, username);
+        pStatement2.setString(3, hashedPassword);
 
         pStatement2.executeUpdate();
 

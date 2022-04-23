@@ -8,6 +8,7 @@ CREATE TABLE `User`
 (
     `UserPk`   int PRIMARY KEY AUTO_INCREMENT,
     `username` varchar(100) NOT NULL,
+    `email`    varchar(100) NOT NULL,
     `password` varchar(64)  NOT NULL
 );
 
