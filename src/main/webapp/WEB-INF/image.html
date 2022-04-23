@@ -17,36 +17,22 @@
 </nav>
 
 <div class="container">
-    <h2
-            th:text="${image.title}"
-            class="mt-4"
-    >
-        Image-Title
-    </h2>
-    <div class="row justify-content-center mt-4 mb-4">
-        <img
-                th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}"
-                th:alt="${image.title}"
-                src="../../../../docs/db_imgs/3.jpg"
-                alt="Image"
-                class="col-auto"
-        />
-    </div>
-
-    <h2>Comments:</h2>
-
-    <div
-            th:each="comment : ${comments}"
-            class="row justify-content-center mb-3"
-    >
-        <div class="col">
-
+    <div class="row justify-content-center mt-4">
+        <div class="col-auto">
             <div class="card">
-                <h3 th:text="${comment.username}" class="card-header">Username</h3>
-                <div
-                        class="card-body"
-                >
-                    <p th:text="${comment.text}">Text</p>
+                <h3 th:text="${image.title}" class="card-header" style="text-align: center;">Image Title</h3>
+                <div class="card-body">
+                    <h5 th:text="${image.description}" class="card-title text-muted" style="text-align: center;">Image
+                        Description
+                    </h5>
+                    <div class="row justify-content-center mt-3">
+                        <img th:src="@{/imageraw?imageId={imageId}(imageId=${image.imagePK})}"
+                             th:alt="${image.title}"
+                             src="../../../../docs/db_imgs/3.jpg"
+                             alt="Image"
+                             class="col-auto"
+                        >
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,12 +40,11 @@
 
     <hr/>
 
-    <h2>Write a comment</h2>
+    <h3>Comments:</h3>
 
-    <form method="post" th:action="@{/comment}">
+    <form method="post" th:action="@{/comment}" class="mb-4">
         <fieldset>
             <div class="form-group">
-                <label for="comment" class="form-label mt-4">Comment</label>
                 <input type="text" class="form-control" id="comment" aria-describedby="comment"
                        placeholder="Write your comment" name="text">
                 <input type="hidden" name="imagePk" th:value="${image.imagePK}"/>
@@ -70,6 +55,23 @@
             </div>
         </fieldset>
     </form>
+
+    <div
+            th:each="comment : ${comments}"
+            class="row justify-content-center mb-3"
+    >
+        <div class="col">
+
+            <div class="card">
+                <h4 th:text="${comment.username}" class="card-header">Username</h4>
+                <div
+                        class="card-body"
+                >
+                    <p th:text="${comment.text}">Text</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
