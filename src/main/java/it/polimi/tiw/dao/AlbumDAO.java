@@ -111,11 +111,13 @@ public class AlbumDAO extends DAO {
         String queryMyAlbums = """
                     SELECT A.*, U.username FROM Album A, User U
                     WHERE UserFk = ? AND A.UserFk = U.UserPk
+                    ORDER BY date DESC
                 """;
 
         String queryOtherAlbums = """
                     SELECT A.*, U.username FROM Album A, User U
                     WHERE A.UserFk != ? AND A.UserFk = U.UserPk
+                    ORDER BY date DESC
                 """;
         List<AlbumWithOwnerName> userAlbums = getAllAlbumsFromQuery(queryMyAlbums, UserFk);
         List<AlbumWithOwnerName> otherUsersAlbums = getAllAlbumsFromQuery(queryOtherAlbums, UserFk);
