@@ -1,6 +1,7 @@
 package it.polimi.tiw.controllers.authentication;
 
 import it.polimi.tiw.exceptions.InvalidCredentialsException;
+import it.polimi.tiw.utils.credentials.LoginCredentials;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -41,7 +42,7 @@ public class LoginController extends BaseAuthController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        Credentials credentials = getCredentials(req);
+        LoginCredentials credentials = new LoginCredentials(req);
 
         if (credentials.areStringsInvalid()) {
             sendBadRequest(res, MISSING_CREDENTIAL_MESSAGE);
@@ -50,7 +51,7 @@ public class LoginController extends BaseAuthController {
 
         int loggedId;
         try {
-            loggedId = userDAO.login(credentials.username, credentials.password);
+            loggedId = userDAO.login(credentials.getUsername(), credentials.getPassword());
         } catch (SQLException e) {
             sendBadGateway(res);
             return;
