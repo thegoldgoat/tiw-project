@@ -13,31 +13,76 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4">
 
-    <div th:if="${msg}" class="alert alert-dismissible alert-danger" style="margin-top: 4em;">
-        <strong th:text="${msg}"> Message </strong>
+    <div th:if="${msg}" class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="alert alert-dismissible alert-danger">
+                <strong th:text="${msg}"> Message </strong>
+            </div>
+        </div>
     </div>
 
+    <div class="row justify-content-center gy-4">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <h3 class="card-header">Login</h3>
+                <div class="card-body">
+                    <form method="post" th:action="@{/login}">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="usernamelogin" class="form-label mt-4">Username</label>
+                                <input type="text" class="form-control" aria-describedby="username"
+                                       id="usernamelogin"
+                                       placeholder="Enter username" name="username">
 
-    <form method="post">
-        <fieldset>
-            <div class="form-group">
-                <label for="username" class="form-label mt-4">Username</label>
-                <input type="text" class="form-control" id="username" aria-describedby="username"
-                       placeholder="Enter username" name="username">
+                                <label for="passwordlogin" class="form-label mt-4">Password</label>
+                                <input type="password" class="form-control" id="passwordlogin" placeholder="Password"
+                                       name="password">
+                            </div>
 
-                <label for="password" class="form-label mt-4">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">Login</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
             </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <h3 class="card-header">Registration</h3>
+                <div class="card-body">
+                    <form method="post" th:action="@{/register}">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="emailregistration" class="form-label mt-4">Email address</label>
+                                <input type="email" class="form-control" aria-describedby="emailHelp"
+                                       id="emailregistration"
+                                       placeholder="Enter email" name="email">
+
+                                <label for="usernameregistration" class="form-label mt-4">Username</label>
+                                <input type="text" class="form-control" id="usernameregistration"
+                                       aria-describedby="username"
+                                       placeholder="Enter username" name="username">
+
+                                <label for="passwordregistration" class="form-label mt-4">Password</label>
+                                <input type="password" class="form-control" id="passwordregistration"
+                                       placeholder="Password"
+                                       name="password">
+                            </div>
 
 
-            <div class="d-grid gap-2 mt-4">
-                <button class="btn btn-primary" type="submit" formaction="login">Login</button>
-                <button class="btn btn-primary" type="submit" formaction="register">Register</button>
+                            <div class="d-grid gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">Register</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
             </div>
-        </fieldset>
-    </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>
