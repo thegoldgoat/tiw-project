@@ -1,5 +1,6 @@
-package it.polimi.tiw.controllers.authentication;
+package it.polimi.tiw.controllers.api.auth;
 
+import it.polimi.tiw.controllers.authentication.BaseAuthController;
 import it.polimi.tiw.exceptions.InvalidEmailException;
 import it.polimi.tiw.exceptions.MissingCredentialsException;
 import it.polimi.tiw.exceptions.PasswordConfirmNotMatchException;
@@ -13,14 +14,14 @@ import java.sql.SQLException;
 
 import static it.polimi.tiw.utils.ControllerUtils.sendBadGateway;
 
-@WebServlet("/register")
-public class RegistrationController extends BaseAuthController {
+@WebServlet("/api/register")
+public class APIRegistrationController extends BaseAuthController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         try {
             tryRegister(req);
-            res.sendRedirect(getRedirectURL("/home"));
+            res.setStatus(HttpServletResponse.SC_OK);
         } catch (MissingCredentialsException e) {
             res.sendRedirect(getRedirectURL("/login?msg=Missing+Credentials"));
         } catch (PasswordConfirmNotMatchException e) {

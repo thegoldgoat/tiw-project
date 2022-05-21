@@ -1,7 +1,7 @@
 package it.polimi.tiw.controllers.authentication;
 
 import it.polimi.tiw.exceptions.InvalidCredentialsException;
-import it.polimi.tiw.utils.credentials.LoginCredentials;
+import it.polimi.tiw.exceptions.MissingCredentialsException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static it.polimi.tiw.utils.ControllerUtils.sendBadGateway;
-import static it.polimi.tiw.utils.ControllerUtils.sendBadRequest;
 
 @WebServlet("/login")
 public class LoginController extends BaseAuthController {
@@ -42,25 +41,16 @@ public class LoginController extends BaseAuthController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        LoginCredentials credentials = new LoginCredentials(req);
-
-        if (credentials.areStringsInvalid()) {
-            sendBadRequest(res, MISSING_CREDENTIAL_MESSAGE);
-            return;
-        }
-
-        int loggedId;
         try {
-            loggedId = userDAO.login(credentials.getUsername(), credentials.getPassword());
-        } catch (SQLException e) {
-            sendBadGateway(res);
-            return;
+            tryLogin(req);
+
+            res.sendRedirect(getRedirectURL("/home"));
         } catch (InvalidCredentialsException e) {
             res.sendRedirect(getRedirectURL("/login?msg=Invalid+Credentials"));
-            return;
+        } catch (SQLException e) {
+            sendBadGateway(res);
+        } catch (MissingCredentialsException e) {
+            res.sendRedirect(getRedirectURL("/login?msg=Missing+Credentials"));
         }
-
-        req.getSession().setAttribute("UserPk", loggedId);
-        res.sendRedirect(getRedirectURL("/home"));
     }
 }
