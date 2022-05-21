@@ -1,8 +1,14 @@
-import "./css/bootstrap.min.css";
+import { LogoutButton } from './components/LogoutButton'
+import { Router } from './components/Router'
+import './css/bootstrap.min.css'
 
-const app = document.querySelector<HTMLDivElement>("#app")!;
+const appElement = document.querySelector<HTMLDivElement>('#app')!
+const logoutElement = document.querySelector<HTMLDivElement>('#logoutButton')!
 
-app.innerHTML = `
-  <h1>Hello Vite!</h1>
-  <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-`;
+const router = new Router(appElement)
+const logoutButton = new LogoutButton(logoutElement)
+
+logoutButton.addSubscriber('logout', router.updateAuthStatus)
+
+router.mount()
+logoutButton.mount()
