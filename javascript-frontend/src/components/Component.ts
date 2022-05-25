@@ -15,7 +15,6 @@ export abstract class Component {
   }
 
   public update() {
-    this.mountElement.innerHTML = ''
     this.showState()
   }
 
@@ -25,7 +24,7 @@ export abstract class Component {
     this.subscribers[eventName].push(callback)
   }
 
-  public notifySubscribers(eventName: string, event: ComponentCallbackEvent) {
+  public notifySubscribers(eventName: string, event?: ComponentCallbackEvent) {
     const subscribersList = this.subscribers[eventName]
 
     if (!subscribersList) {

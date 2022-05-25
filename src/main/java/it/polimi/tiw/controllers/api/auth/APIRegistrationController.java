@@ -5,6 +5,7 @@ import it.polimi.tiw.exceptions.InvalidEmailException;
 import it.polimi.tiw.exceptions.MissingCredentialsException;
 import it.polimi.tiw.exceptions.PasswordConfirmNotMatchException;
 import it.polimi.tiw.exceptions.UsernameAlreadyUsedException;
+import it.polimi.tiw.utils.ControllerUtils;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,13 +24,13 @@ public class APIRegistrationController extends BaseAuthController {
             tryRegister(req);
             res.setStatus(HttpServletResponse.SC_OK);
         } catch (MissingCredentialsException e) {
-            res.sendRedirect(getRedirectURL("/login?msg=Missing+Credentials"));
+            ControllerUtils.sendBadRequest(res, "Missing Credentials");
         } catch (PasswordConfirmNotMatchException e) {
-            res.sendRedirect(getRedirectURL("/login?msg=Password+and+confirm+must+match"));
+            ControllerUtils.sendBadRequest(res, "Password and Confirmation do not match");
         } catch (InvalidEmailException e) {
-            res.sendRedirect(getRedirectURL("/login?msg=Invalid+Email"));
+            ControllerUtils.sendBadRequest(res, "Invalid email format");
         } catch (UsernameAlreadyUsedException e) {
-            res.sendRedirect(getRedirectURL("/login?msg=Username+already+taken"));
+            ControllerUtils.sendBadRequest(res, "Username Already Taken");
         } catch (SQLException e) {
             sendBadGateway(res);
         }

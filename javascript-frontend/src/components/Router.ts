@@ -3,20 +3,47 @@ import { doRequest } from '../utils/Request'
 import { Component } from './Component'
 import { LoadingPage } from './pages/LoadingPage'
 import { Page } from './pages/Page'
+import { AuthPage } from './pages/AuthPage'
+import { AlbumPage } from './pages/AlbumPage'
 
 export class Router extends Component {
   currentPage!: Page
 
-  async mounted() {
-    this.currentPage = new LoadingPage(this.mountElement)
+  mounted() {
+    this.getAlbumPage()
+  }
 
-    try {
-      const respose = await doRequest('//google.com', 'GET', {})
+  private getAlbumPage() {
+    this.updateCurrentPage(new LoadingPage(this.mountElement))
 
-      console.log(respose)
-    } catch (error) {
-      this.notifySubscribers('error', error)
-    }
+    doRequest('/albums', 'GET')
+      .then(async (response) => {
+        const responseData = await response.json()
+        this.setAlbumPage(responseData)
+        this.notifySubscribers('logged')
+      })
+      .catch((error) => {
+        console.error(error)
+        this.setAuthPage()
+      })
+  }
+
+  private updateCurrentPage(newPage: Page) {
+    this.currentPage = newPage
+    newPage.mount()
+    this.update()
+  }
+
+  private setAuthPage() {
+    const authPage = new AuthPage(this.mountElement)
+    authPage.addSubscriber('logged', (event) => this.updateAuthStatus(event))
+
+    this.updateCurrentPage(authPage)
+  }
+
+  private setAlbumPage(allAlbums: any) {
+    const albumPage = new AlbumPage(this.mountElement)
+    this.updateCurrentPage(albumPage)
   }
 
   showState(): void {
@@ -25,5 +52,11 @@ export class Router extends Component {
 
   updateAuthStatus(authStatus: AuthStatus) {
     console.debug(authStatus)
+    if (authStatus.isLogged) {
+      this.notifySubscribers('logged')
+      this.getAlbumPage()
+    } else {
+      this.setAuthPage()
+    }
   }
 }
