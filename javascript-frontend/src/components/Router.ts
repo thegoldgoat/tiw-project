@@ -5,6 +5,7 @@ import { LoadingPage } from './pages/LoadingPage'
 import { Page } from './pages/Page'
 import { AuthPage } from './pages/AuthPage'
 import { AlbumPage } from './pages/AlbumPage'
+import { AllAlbums } from '../types/AllAlbums'
 
 export class Router extends Component {
   currentPage!: Page
@@ -18,7 +19,7 @@ export class Router extends Component {
 
     doRequest('/albums', 'GET')
       .then(async (response) => {
-        const responseData = await response.json()
+        const responseData: AllAlbums = await response.json()
         this.setAlbumPage(responseData)
         this.notifySubscribers('logged')
       })
@@ -41,8 +42,9 @@ export class Router extends Component {
     this.updateCurrentPage(authPage)
   }
 
-  private setAlbumPage(allAlbums: any) {
+  private setAlbumPage(allAlbums: AllAlbums) {
     const albumPage = new AlbumPage(this.mountElement)
+    albumPage.allAlbums = allAlbums
     this.updateCurrentPage(albumPage)
   }
 

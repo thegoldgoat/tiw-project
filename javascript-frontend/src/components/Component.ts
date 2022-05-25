@@ -10,6 +10,7 @@ export abstract class Component {
   }
 
   public mount(): void {
+    this.mountElement.innerHTML = ''
     this.mounted()
     this.showState()
   }
