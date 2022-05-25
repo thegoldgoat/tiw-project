@@ -1,6 +1,7 @@
 import { Component } from './Component'
 import { AuthStatus } from '../types/AuthStatus'
 import { doRequest } from '../utils/Request'
+import { eventBus } from './EventBus'
 
 export class LogoutButton extends Component {
   buttonElement!: HTMLButtonElement
@@ -19,9 +20,8 @@ export class LogoutButton extends Component {
         console.error('Error while logging out?')
       }
 
-      this.notifySubscribers('logout', {
+      eventBus.notifySubscribers('logout', {
         isLogged: false,
-        username: '',
       } as AuthStatus)
 
       this.isLogged = false

@@ -1,3 +1,4 @@
+import { eventBus } from './components/EventBus'
 import { LogoutButton } from './components/LogoutButton'
 import { Router } from './components/Router'
 import './css/bootstrap.min.css'
@@ -8,10 +9,19 @@ const logoutElement = document.querySelector<HTMLDivElement>('#logoutButton')!
 const router = new Router(appElement)
 const logoutButton = new LogoutButton(logoutElement)
 
-logoutButton.addSubscriber('logout', (event) => router.updateAuthStatus(event))
-router.addSubscriber('logged', () => {
+eventBus.addSubscriber('logout', (event) => router.updateAuthStatus(event))
+eventBus.addSubscriber('logged', () => {
   logoutButton.isLogged = true
   logoutButton.update()
+})
+
+eventBus.addSubscriber('receivedAlbums', () => {
+  logoutButton.isLogged = true
+  logoutButton.update()
+})
+
+eventBus.addSubscriber('logged', (authStatus) => {
+  router.updateAuthStatus(authStatus)
 })
 
 router.mount()

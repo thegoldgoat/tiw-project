@@ -1,5 +1,6 @@
 import { AuthStatus } from '../../types/AuthStatus'
 import { doRequest } from '../../utils/Request'
+import { eventBus } from '../EventBus'
 import { Page } from './Page'
 
 type LoginFormElements = {
@@ -164,9 +165,8 @@ export class AuthPage extends Page {
         password: password,
         passwordconfirm: passwordconfirm,
       })
-      this.notifySubscribers('logged', {
+      eventBus.notifySubscribers('logged', {
         isLogged: true,
-        username: username,
       } as AuthStatus)
     } catch (error) {
       this.errorMessage = error as any
@@ -180,9 +180,8 @@ export class AuthPage extends Page {
         username: username,
         password: password,
       })
-      this.notifySubscribers('logged', {
+      eventBus.notifySubscribers('logged', {
         isLogged: true,
-        username: username,
       } as AuthStatus)
     } catch (error) {
       this.errorMessage = error as any

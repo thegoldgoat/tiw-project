@@ -6,6 +6,7 @@ import { Page } from './pages/Page'
 import { AuthPage } from './pages/AuthPage'
 import { AlbumPage } from './pages/AlbumPage'
 import { AllAlbums } from '../types/AllAlbums'
+import { eventBus } from './EventBus'
 
 export class Router extends Component {
   currentPage!: Page
@@ -21,7 +22,7 @@ export class Router extends Component {
       .then(async (response) => {
         const responseData: AllAlbums = await response.json()
         this.setAlbumPage(responseData)
-        this.notifySubscribers('logged')
+        eventBus.notifySubscribers('receivedAlbums')
       })
       .catch((error) => {
         console.error(error)
@@ -37,7 +38,6 @@ export class Router extends Component {
 
   private setAuthPage() {
     const authPage = new AuthPage(this.mountElement)
-    authPage.addSubscriber('logged', (event) => this.updateAuthStatus(event))
 
     this.updateCurrentPage(authPage)
   }
@@ -55,7 +55,6 @@ export class Router extends Component {
   updateAuthStatus(authStatus: AuthStatus) {
     console.debug(authStatus)
     if (authStatus.isLogged) {
-      this.notifySubscribers('logged')
       this.getAlbumPage()
     } else {
       this.setAuthPage()
