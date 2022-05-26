@@ -1,33 +1,36 @@
-import {AuthStatus} from '../types/AuthStatus'
-import {doRequest} from '../utils/Request'
-import {Component} from './Component'
-import {LoadingPage} from './pages/LoadingPage'
-import {Page} from './pages/Page'
-import {AuthPage} from './pages/AuthPage'
-import {AlbumPage} from './pages/AlbumPage'
-import {AllAlbums} from '../types/AllAlbums'
-import {eventBus} from './EventBus'
-import {ImagesPage} from './pages/ImagesPage'
+import { AuthStatus } from '../types/AuthStatus'
+import { doRequest } from '../utils/Request'
+import { Component } from './Component'
+import { LoadingPage } from './pages/LoadingPage'
+import { Page } from './pages/Page'
+import { AuthPage } from './pages/AuthPage'
+import { AlbumPage } from './pages/AlbumPage'
+import { AllAlbums } from '../types/AllAlbums'
+import { eventBus } from './EventBus'
+import { ImagesPage } from './pages/ImagesPage'
 
 export class Router extends Component {
-    currentPage!: Page
+  currentPage!: Page
+  isLogged = false
+  allAlbum!: AllAlbums
 
-    mounted() {
-        this.getAlbumPage()
-    }
+  mounted() {
+    this.getAlbumPage()
+  }
 
-    private getAlbumPage() {
-        this.updateCurrentPage(new LoadingPage(this.mountElement))
+  private getAlbumPage() {
+    this.updateCurrentPage(new LoadingPage(this.mountElement))
 
-        doRequest('/albums', 'GET')
-            .then(async (response) => {
-                const responseData: AllAlbums = await response.json()
-                this.setAlbumPage(responseData)
-                eventBus.notifySubscribers('receivedAlbums')
-            })
-            .catch((error) => {
-                console.error(error)
-                this.setAuthPage()
+    doRequest('/albums', 'GET')
+      .then(async (response) => {
+        const responseData: AllAlbums = await response.json()
+        this.isLogged = true
+        this.allAlbum = responseData
+        this.setAlbumPage()
+        eventBus.notifySubscribers('receivedAlbums')
+      })
+      .catch((error) => {
+        this.setAuthPage()
       })
   }
 
@@ -43,26 +46,38 @@ export class Router extends Component {
     this.updateCurrentPage(authPage)
   }
 
-    private setAlbumPage(allAlbums: AllAlbums) {
-        const albumPage = new AlbumPage(this.mountElement)
-        albumPage.allAlbums = allAlbums
-        this.updateCurrentPage(albumPage)
-    }
+  private setAlbumPage() {
+    const albumPage = new AlbumPage(this.mountElement)
+    albumPage.allAlbums = this.allAlbum
+    this.updateCurrentPage(albumPage)
+  }
 
-    showState(): void {
-        this.currentPage.update()
-    }
+  showState(): void {
+    this.currentPage.update()
+  }
 
-    updateAuthStatus(authStatus: AuthStatus) {
-        console.debug(authStatus)
-        if (authStatus.isLogged) {
-            this.getAlbumPage()
-        } else {
-            this.setAuthPage()
-        }
+  updateAuthStatus(authStatus: AuthStatus) {
+    this.isLogged = authStatus.isLogged
+    if (authStatus.isLogged) {
+      this.getAlbumPage()
+    } else {
+      this.setAuthPage()
     }
+  }
 
-    openAlbum(albumPk: number) {
-        this.updateCurrentPage(new ImagesPage(this.mountElement, albumPk))
+  openAlbum(albumPk: number) {
+    this.updateCurrentPage(new ImagesPage(this.mountElement, albumPk))
+  }
+
+  gotoHome() {
+    if (this.isLogged) {
+      if (this.allAlbum) {
+        this.setAlbumPage()
+      } else {
+        this.getAlbumPage()
+      }
+    } else {
+      this.setAuthPage()
     }
+  }
 }

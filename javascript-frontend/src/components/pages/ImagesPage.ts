@@ -1,6 +1,7 @@
-import {doRequest} from '../../utils/Request'
-import {LoadingPage} from './LoadingPage'
-import {Page} from './Page'
+import { doRequest } from '../../utils/Request'
+import { ImagesList } from '../ImagesList'
+import { LoadingPage } from './LoadingPage'
+import { Page } from './Page'
 
 export class ImagesPage extends Page {
   private albumPk: number
@@ -9,6 +10,7 @@ export class ImagesPage extends Page {
   private isLoading = true
 
   private loadingPage!: LoadingPage
+  private imagesList!: ImagesList
 
   constructor(mountElement: HTMLElement, albumPk: number) {
     super(mountElement)
@@ -18,6 +20,12 @@ export class ImagesPage extends Page {
 
   protected async mounted() {
     this.loadingPage = new LoadingPage(this.mountElement)
+    this.imagesList = new ImagesList(this.mountElement, {
+      currentPage: 0,
+      images: [],
+      pageCount: 0,
+    })
+
     this.updatePage()
   }
 
@@ -26,10 +34,10 @@ export class ImagesPage extends Page {
     this.update()
     try {
       const response = await doRequest(
-          `/album?albumPk=${this.albumPk}&page=${this.currentPage}`,
-          'GET'
+        `/album?albumPk=${this.albumPk}&page=${this.currentPage}`,
+        'GET'
       )
-      console.debug(await response.json())
+      this.imagesList.allImages = await response.json()
     } catch (error) {
       console.error(error)
     }
@@ -42,7 +50,7 @@ export class ImagesPage extends Page {
     if (this.isLoading) {
       this.loadingPage.mount()
     } else {
-      this.mountElement.innerHTML = 'Response in console'
+      this.imagesList.mount()
     }
   }
 }

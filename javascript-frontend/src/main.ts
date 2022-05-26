@@ -1,6 +1,6 @@
-import {eventBus} from './components/EventBus'
-import {LogoutButton} from './components/LogoutButton'
-import {Router} from './components/Router'
+import { eventBus } from './components/EventBus'
+import { LogoutButton } from './components/LogoutButton'
+import { Router } from './components/Router'
 import './css/bootstrap.min.css'
 
 const appElement = document.querySelector<HTMLDivElement>('#app')!
@@ -30,3 +30,8 @@ eventBus.addSubscriber('openAlbum', (albumPk) => {
 
 router.mount()
 logoutButton.mount()
+
+document.getElementById('home')!.onclick = (event) => {
+  event.preventDefault()
+  router.gotoHome()
+}
