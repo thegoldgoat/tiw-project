@@ -1,6 +1,6 @@
-import { eventBus } from './components/EventBus'
-import { LogoutButton } from './components/LogoutButton'
-import { Router } from './components/Router'
+import {eventBus} from './components/EventBus'
+import {LogoutButton} from './components/LogoutButton'
+import {Router} from './components/Router'
 import './css/bootstrap.min.css'
 
 const appElement = document.querySelector<HTMLDivElement>('#app')!
@@ -22,6 +22,10 @@ eventBus.addSubscriber('receivedAlbums', () => {
 
 eventBus.addSubscriber('logged', (authStatus) => {
   router.updateAuthStatus(authStatus)
+})
+
+eventBus.addSubscriber('openAlbum', (albumPk) => {
+  router.openAlbum(albumPk)
 })
 
 router.mount()

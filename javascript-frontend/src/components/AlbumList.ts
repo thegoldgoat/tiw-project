@@ -1,5 +1,6 @@
-import { Album } from '../types/AllAlbums'
-import { Component } from './Component'
+import {Album} from '../types/AllAlbums'
+import {Component} from './Component'
+import {eventBus} from './EventBus'
 
 export class AlbumList extends Component {
   private albums: Album[]
@@ -36,7 +37,7 @@ export class AlbumList extends Component {
       titleAnchor.innerText = album.title
       titleAnchor.onclick = (event) => {
         event.preventDefault()
-        console.log(`Clicked on ${album.title} (${album.albumPk})`)
+        eventBus.notifySubscribers('openAlbum', album.albumPk)
       }
       thTitle.appendChild(titleAnchor)
 

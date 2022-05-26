@@ -3,6 +3,7 @@ package it.polimi.tiw.controllers;
 import it.polimi.tiw.beans.AllImages;
 import it.polimi.tiw.dao.AlbumDAO;
 import it.polimi.tiw.exceptions.AlbumNotFoundException;
+import it.polimi.tiw.exceptions.InvalidOperationException;
 import it.polimi.tiw.exceptions.PageOutOfBoundException;
 import it.polimi.tiw.utils.ControllerUtils;
 
@@ -19,6 +20,25 @@ public class AlbumController extends BaseTemplateServlet {
 
     AlbumDAO albumDAO;
 
+    public static AllImages getAllImagesFromReq(HttpServletRequest req, AlbumDAO albumDAO)
+            throws InvalidOperationException, AlbumNotFoundException, SQLException,
+                    PageOutOfBoundException {
+        int albumPk;
+        int page;
+        try {
+            albumPk = Integer.parseInt(req.getParameter("albumPk"));
+        } catch (Exception e) {
+            throw new InvalidOperationException("Invalid albumPk");
+        }
+        try {
+            page = Integer.parseInt(req.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 0;
+        }
+
+        return albumDAO.getImages(albumPk, page);
+    }
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -28,24 +48,10 @@ public class AlbumController extends BaseTemplateServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        int albumPk;
-        int page;
-        try {
-            albumPk = Integer.parseInt(req.getParameter("albumPk"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            ControllerUtils.sendBadRequest(res, "Error while parsing");
-            return;
-        }
-        try {
-            page = Integer.parseInt(req.getParameter("page"));
-        } catch (NumberFormatException e) {
-            page = 0;
-        }
-
+        int albumPk = Integer.parseInt(req.getParameter("albumPk"));
         AllImages allImages;
         try {
-            allImages = albumDAO.getImages(albumPk, page);
+            allImages = getAllImagesFromReq(req, albumDAO);
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
             return;
@@ -55,6 +61,9 @@ public class AlbumController extends BaseTemplateServlet {
         } catch (PageOutOfBoundException e) {
             // Instead of sending an error message, just redirect to the first page
             res.sendRedirect(getRedirectURL("/album?albumPk=" + albumPk));
+            return;
+        } catch (InvalidOperationException e) {
+            ControllerUtils.sendBadRequest(res, e.getMessage());
             return;
         }
 
