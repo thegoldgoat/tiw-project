@@ -28,6 +28,10 @@ eventBus.addSubscriber('openAlbum', (albumPk) => {
   router.openAlbum(albumPk)
 })
 
+eventBus.addSubscriber('gotoImage', (imagePk) => {
+  router.openImage(imagePk)
+})
+
 router.mount()
 logoutButton.mount()
 

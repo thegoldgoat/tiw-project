@@ -1,5 +1,6 @@
 import { AllImages, Image } from '../types/AllImages'
 import { Component } from './Component'
+import { eventBus } from './EventBus'
 
 export class ImagesList extends Component {
   allImages: AllImages
@@ -47,7 +48,7 @@ export class ImagesList extends Component {
 
     imageAnchor.onclick = (event) => {
       event.preventDefault()
-      console.debug(`Clicked on image with ID=${image.ImagePK}`)
+      eventBus.notifySubscribers('gotoImage', image.ImagePK)
     }
 
     const imageElement = document.createElement('img')

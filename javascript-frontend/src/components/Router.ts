@@ -8,6 +8,7 @@ import { AlbumPage } from './pages/AlbumPage'
 import { AllAlbums } from '../types/AllAlbums'
 import { eventBus } from './EventBus'
 import { ImagesPage } from './pages/ImagesPage'
+import { ImagePage } from './pages/ImagePage'
 
 export class Router extends Component {
   currentPage!: Page
@@ -52,6 +53,10 @@ export class Router extends Component {
     this.updateCurrentPage(albumPage)
   }
 
+  private setImagePage(imagePk: number) {
+    this.updateCurrentPage(new ImagePage(this.mountElement, imagePk))
+  }
+
   showState(): void {
     this.currentPage.update()
   }
@@ -67,6 +72,10 @@ export class Router extends Component {
 
   openAlbum(albumPk: number) {
     this.updateCurrentPage(new ImagesPage(this.mountElement, albumPk))
+  }
+
+  openImage(imagePk: number) {
+    this.setImagePage(imagePk)
   }
 
   gotoHome() {

@@ -29,14 +29,13 @@ public class ImageController extends BaseTemplateServlet {
         commentDAO = new CommentDAO(connection);
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public static ImageAndComments getImageAndComment(HttpServletRequest req, HttpServletResponse res, ImageDAO imageDAO, CommentDAO commentDAO) throws IOException {
         int imageId;
         try {
             imageId = Integer.parseInt(req.getParameter("imagePk"));
         } catch (NumberFormatException e) {
             ControllerUtils.sendBadRequest(res, "Missing imageId");
-            return;
+            return null;
         }
 
         Image image;
@@ -44,10 +43,10 @@ public class ImageController extends BaseTemplateServlet {
             image = imageDAO.getImage(imageId);
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
-            return;
+            return null;
         } catch (ImageNotFoundException e) {
             ControllerUtils.sendNotFound(res, e.getMessage());
-            return;
+            return null;
         }
 
         List<Comment> comments;
@@ -55,14 +54,28 @@ public class ImageController extends BaseTemplateServlet {
             comments = commentDAO.getComments(imageId);
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
+            return null;
+        }
+
+        return new ImageAndComments(comments, image);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        ImageAndComments imageAndComments = getImageAndComment(req, res, imageDAO, commentDAO);
+
+        if (imageAndComments == null) {
             return;
         }
 
         WebContext ctx = createWebContext(req, res);
 
-        ctx.setVariable("image", image);
-        ctx.setVariable("comments", comments);
+        ctx.setVariable("image", imageAndComments.image);
+        ctx.setVariable("comments", imageAndComments.comments);
 
         processTemplate("WEB-INF/image.html", templateEngine, ctx, res);
+    }
+
+    public record ImageAndComments(List<Comment> comments, Image image) {
     }
 }
