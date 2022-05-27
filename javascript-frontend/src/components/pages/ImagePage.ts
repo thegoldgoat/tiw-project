@@ -1,18 +1,18 @@
-import { doRequest } from '../../utils/Request'
-import { CommentsList } from '../CommentsList'
-import { ImageComponent } from '../ImageComponent'
-import { LoadingPage } from './LoadingPage'
-import { Page } from './Page'
+import {doRequest} from '../../utils/Request'
+import {CommentsList} from '../CommentsList'
+import {ImageComponent} from '../ImageComponent'
+import {LoadingPage} from './LoadingPage'
+import {Page} from './Page'
 
 export class ImagePage extends Page {
-  private imagePk: number
-  private isLoading = true
-  private loadingPage!: LoadingPage
+    private imagePk: number
+    private isLoading = true
+    private loadingPage!: LoadingPage
 
-  private imageComponent!: ImageComponent
-  private commentsList!: CommentsList
+    private imageComponent!: ImageComponent
+    private commentsList!: CommentsList
 
-  private afterLoadingDiv!: HTMLElement
+    private afterLoadingDiv!: HTMLElement
   private imageComponentMount!: HTMLDivElement
   private commentsMount!: HTMLDivElement
 
@@ -31,7 +31,7 @@ export class ImagePage extends Page {
     this.afterLoadingDiv.appendChild(this.imageComponentMount)
     this.afterLoadingDiv.appendChild(this.commentsMount)
 
-    this.commentsList = new CommentsList(this.commentsMount)
+      this.commentsList = new CommentsList(this.commentsMount, this.imagePk)
 
     this.getFromAPI()
   }

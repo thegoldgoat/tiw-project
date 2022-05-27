@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @WebServlet("/comment")
 public class CommentController extends BaseServlet {
-    CommentDAO commentDAO;
+    protected CommentDAO commentDAO;
 
     @Override
     public void init() throws ServletException {
@@ -21,16 +21,16 @@ public class CommentController extends BaseServlet {
         commentDAO = new CommentDAO(connection);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    protected boolean tryAddComment(HttpServletRequest req, HttpServletResponse res)
+            throws IOException {
         int userId;
         int imageId;
         try {
             userId = (int) req.getSession().getAttribute("UserPk");
             imageId = Integer.parseInt(req.getParameter("imagePk"));
         } catch (Exception e) {
-            ControllerUtils.sendBadGateway(res);
-            return;
+            ControllerUtils.sendBadRequest(res);
+            return false;
         }
 
         String text = req.getParameter("text");
@@ -39,13 +39,21 @@ public class CommentController extends BaseServlet {
             commentDAO.addComment(userId, imageId, text);
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
-            return;
+            return false;
         } catch (UserNotFoundException e) {
             e.printStackTrace();
             ControllerUtils.sendNotFound(res, "User not found. (?)");
-            return;
+            return false;
         }
 
-        res.sendRedirect(getRedirectURL("/image?imagePk=" + imageId));
+        return true;
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        if (this.tryAddComment(req, res)) {
+            int imageId = Integer.parseInt(req.getParameter("imagePk"));
+            res.sendRedirect(getRedirectURL("/image?imagePk=" + imageId));
+        }
     }
 }
