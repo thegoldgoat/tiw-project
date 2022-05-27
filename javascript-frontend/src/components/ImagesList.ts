@@ -26,6 +26,9 @@ export class ImagesList extends Component {
       row.classList.add('gy-3')
       this.allImages.images.forEach((image) => {
         const newDiv = document.createElement('div')
+        newDiv.classList.add('col-sm-12')
+        newDiv.classList.add('col-md-6')
+        newDiv.classList.add('col-lg-4')
         const newImageComponent = new ImageComponent(newDiv, image, true)
         newImageComponent.mount()
         row.appendChild(newDiv)

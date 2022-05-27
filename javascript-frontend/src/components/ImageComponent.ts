@@ -13,11 +13,6 @@ export class ImageComponent extends Component {
   }
 
   protected mounted(): void {
-    const returnDiv = document.createElement('div')
-    returnDiv.classList.add('col-sm-12')
-    returnDiv.classList.add('col-md-6')
-    returnDiv.classList.add('col-lg-4')
-
     const card = document.createElement('div')
     card.classList.add('card')
 
@@ -80,9 +75,7 @@ export class ImageComponent extends Component {
     card.appendChild(cardBody)
     card.appendChild(cardFooter)
 
-    returnDiv.appendChild(card)
-
-    this.mountElement.appendChild(returnDiv)
+    this.mountElement.appendChild(card)
   }
 
   protected showState(): void {}

@@ -10,23 +10,6 @@ export class CommentComponent extends Component {
   }
 
   protected mounted(): void {
-    // <div
-    //         th:each="comment : ${comments}"
-    //         class="row justify-content-center mb-3"
-    // >
-    //     <div class="col">
-
-    //         <div class="card">
-    //             <h4 th:text="${comment.username}" class="card-header">Username</h4>
-    //             <div
-    //                     class="card-body"
-    //             >
-    //                 <p th:text="${comment.text}">Text</p>
-    //             </div>
-    //         </div>
-    //     </div>
-    // </div>
-
     this.mountElement.innerHTML = ''
 
     const divRow = document.createElement('div')
