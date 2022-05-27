@@ -1,4 +1,5 @@
 import { doRequest } from '../../utils/Request'
+import { ImageComponent } from '../ImageComponent'
 import { LoadingPage } from './LoadingPage'
 import { Page } from './Page'
 
@@ -6,6 +7,7 @@ export class ImagePage extends Page {
   private imagePk: number
   private isLoading = true
   private loadingPage!: LoadingPage
+  private imageComponent!: ImageComponent
 
   constructor(mountElement: HTMLElement, imagePk: number) {
     super(mountElement)
@@ -22,7 +24,12 @@ export class ImagePage extends Page {
     this.update()
     try {
       const response = await doRequest(`/image?imagePk=${this.imagePk}`, 'GET')
-      console.debug(await response.json())
+      const responseJson = await response.json()
+      this.imageComponent = new ImageComponent(
+        this.mountElement,
+        responseJson.image,
+        false
+      )
     } catch (error) {
       console.error(error)
     }
@@ -35,7 +42,7 @@ export class ImagePage extends Page {
     if (this.isLoading) {
       this.loadingPage.mount()
     } else {
-      this.mountElement.innerHTML = 'Image Page'
+      this.imageComponent.mount()
     }
   }
 }
