@@ -26,6 +26,11 @@ export class ImagesPage extends Page {
       pageCount: 0,
     })
 
+    this.imagesList.addSubscriber('updatepage', (newPage: number) => {
+      this.currentPage = newPage
+      this.updatePage()
+    })
+
     this.updatePage()
   }
 

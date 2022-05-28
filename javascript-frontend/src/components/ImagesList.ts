@@ -1,10 +1,12 @@
-import { AllImages, Image } from '../types/AllImages'
+import { AllImages } from '../types/AllImages'
 import { Component } from './Component'
-import { eventBus } from './EventBus'
 import { ImageComponent } from './ImageComponent'
+import { PaginationComponent } from './PaginationComponent'
 
 export class ImagesList extends Component {
   allImages: AllImages
+  paginationComponentMount!: HTMLElement
+  paginationComponent!: PaginationComponent
 
   constructor(mountElement: HTMLElement, allImages: AllImages) {
     super(mountElement)
@@ -13,6 +15,16 @@ export class ImagesList extends Component {
 
   protected mounted(): void {
     this.mountElement.innerHTML = 'Images List'
+    this.paginationComponentMount = document.createElement('div')
+    this.paginationComponent = new PaginationComponent(
+      this.paginationComponentMount,
+      this.allImages.pageCount - 1,
+      this.allImages.currentPage
+    )
+    this.paginationComponent.mount()
+    this.paginationComponent.addSubscriber('updatepage', (newPage) => {
+      this.notifySubscribers('updatepage', newPage)
+    })
   }
 
   protected showState(): void {
@@ -35,6 +47,7 @@ export class ImagesList extends Component {
       })
 
       this.mountElement.appendChild(row)
+      this.mountElement.appendChild(this.paginationComponentMount)
     }
   }
 }

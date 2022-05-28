@@ -2,6 +2,8 @@ import { Image } from '../types/AllImages'
 import { Component } from './Component'
 import { eventBus } from './EventBus'
 
+const BASE_IMAGE_URL = import.meta.env.BASE_IMAGE_URL | '/tiw-project'
+
 export class ImageComponent extends Component {
   private image: Image
   private addAnchor: boolean
@@ -48,7 +50,7 @@ export class ImageComponent extends Component {
     }
 
     const imageElement = document.createElement('img')
-    imageElement.src = `/imageraw?imageId=${this.image.ImagePK}`
+    imageElement.src = `${BASE_IMAGE_URL}/imageraw?imageId=${this.image.ImagePK}`
     imageElement.alt = this.image.title
     imageElement.style.height = '200px'
     imageElement.classList.add('img-thumbnail')
