@@ -70,7 +70,7 @@ public class CommentDAO extends DAO {
     * @throws SQLException SQL library internal exception
     */
     public List<Comment> getComments(int imageFk) throws SQLException {
-        String query = "SELECT * FROM Comment WHERE ImageFk = ?";
+        String query = "SELECT * FROM Comment WHERE ImageFk = ? ORDER BY CommentPk DESC";
 
         PreparedStatement pStatement = connection.prepareStatement(query);
 

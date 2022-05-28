@@ -1,7 +1,7 @@
-import {MyComment} from '../types/Comment'
-import {doRequest} from '../utils/Request'
-import {CommentComponent} from './CommentComponent'
-import {Component} from './Component'
+import { MyComment } from '../types/Comment'
+import { doRequest } from '../utils/Request'
+import { CommentComponent } from './CommentComponent'
+import { Component } from './Component'
 
 export class CommentsList extends Component {
   comments: MyComment[] = []
@@ -48,6 +48,9 @@ export class CommentsList extends Component {
           imagePk: this.imagePk,
           text: messageContent,
         })
+
+        this.commentInput.value = ''
+        this.notifySubscribers('updatecomments')
       } catch (error) {
         console.error(error)
       }
