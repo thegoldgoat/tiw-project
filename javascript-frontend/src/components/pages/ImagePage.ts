@@ -1,6 +1,8 @@
 import { doRequest } from '../../utils/Request'
 import { CommentsList } from '../CommentsList'
+import { eventBus } from '../EventBus'
 import { ImageComponent } from '../ImageComponent'
+import { ToastMessage } from '../ToastComponent'
 import { LoadingPage } from './LoadingPage'
 import { Page } from './Page'
 
@@ -55,7 +57,10 @@ export class ImagePage extends Page {
       this.commentsList.comments = responseJson.comments
       this.commentsList.mount()
     } catch (error) {
-      console.error(error)
+      eventBus.notifySubscribers('toast', {
+        isError: true,
+        message: error,
+      } as ToastMessage)
     }
     this.mountElement.innerHTML = 'ue'
     this.isLoading = false

@@ -1,5 +1,7 @@
 import { doRequest } from '../../utils/Request'
+import { eventBus } from '../EventBus'
 import { ImagesList } from '../ImagesList'
+import { ToastMessage } from '../ToastComponent'
 import { LoadingPage } from './LoadingPage'
 import { Page } from './Page'
 
@@ -44,7 +46,10 @@ export class ImagesPage extends Page {
       )
       this.imagesList.allImages = await response.json()
     } catch (error) {
-      console.error(error)
+      eventBus.notifySubscribers('toast', {
+        isError: true,
+        message: error,
+      } as ToastMessage)
     }
 
     this.isLoading = false

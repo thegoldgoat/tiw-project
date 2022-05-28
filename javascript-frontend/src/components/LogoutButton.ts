@@ -2,6 +2,7 @@ import { Component } from './Component'
 import { AuthStatus } from '../types/AuthStatus'
 import { doRequest } from '../utils/Request'
 import { eventBus } from './EventBus'
+import { ToastMessage } from './ToastComponent'
 
 export class LogoutButton extends Component {
   buttonElement!: HTMLButtonElement
@@ -17,7 +18,10 @@ export class LogoutButton extends Component {
       try {
         await doRequest('/logout', 'POST')
       } catch (error) {
-        console.error('Error while logging out?')
+        eventBus.notifySubscribers('toast', {
+          isError: true,
+          message: error,
+        } as ToastMessage)
       }
 
       eventBus.notifySubscribers('logout', {

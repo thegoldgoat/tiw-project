@@ -1,6 +1,7 @@
 import { AuthStatus } from '../../types/AuthStatus'
 import { doRequest } from '../../utils/Request'
 import { eventBus } from '../EventBus'
+import { ToastMessage } from '../ToastComponent'
 import { Page } from './Page'
 
 type LoginFormElements = {
@@ -14,20 +15,8 @@ type RegistrationFormElements = LoginFormElements & {
 }
 
 export class AuthPage extends Page {
-  errorMessage = ''
-  errorMessageContainer!: HTMLElement
-  errorMessageDiv!: HTMLElement
-
   protected mounted(): void {
-    this.mountElement.innerHTML = `
-        <div id="errorMessageContainer" class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <div class="alert alert-dismissible alert-danger">
-                    <strong id="errorMessage"> Message </strong>
-                </div>
-            </div>
-        </div>
-        
+    this.mountElement.innerHTML = `        
         <div class="row justify-content-center gy-4">
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card">
@@ -95,11 +84,6 @@ export class AuthPage extends Page {
             </div>
         </div>
         `
-    this.errorMessageContainer = document.getElementById(
-      'errorMessageContainer'
-    )!
-    this.errorMessageDiv = document.getElementById('errorMessage')!
-
     const loginForm = document.getElementById('loginForm')!
 
     loginForm.addEventListener('submit', (event) => {
@@ -126,8 +110,10 @@ export class AuthPage extends Page {
       const email = elements.email.value
 
       if (!email.match(checkEmailRegex)) {
-        this.errorMessage = 'Invalid Email Format'
-        this.update()
+        eventBus.notifySubscribers('toast', {
+          isError: true,
+          message: 'Invalid Email Format',
+        } as ToastMessage)
         return
       }
 
@@ -135,13 +121,12 @@ export class AuthPage extends Page {
       const passwordconfirm = elements.passwordconfirm.value
 
       if (password !== passwordconfirm) {
-        this.errorMessage = 'Password and Confirm Password does not match'
-        this.update()
+        eventBus.notifySubscribers('toast', {
+          isError: true,
+          message: 'Password and Confirm Password does not match',
+        } as ToastMessage)
         return
       }
-
-      this.errorMessage = ''
-      this.update()
 
       this.tryRegistration(
         email,
@@ -169,8 +154,10 @@ export class AuthPage extends Page {
         isLogged: true,
       } as AuthStatus)
     } catch (error) {
-      this.errorMessage = error as any
-      this.update()
+      eventBus.notifySubscribers('toast', {
+        isError: true,
+        message: error,
+      } as ToastMessage)
     }
   }
 
@@ -184,15 +171,12 @@ export class AuthPage extends Page {
         isLogged: true,
       } as AuthStatus)
     } catch (error) {
-      this.errorMessage = error as any
-      this.update()
+      eventBus.notifySubscribers('toast', {
+        isError: true,
+        message: error,
+      } as ToastMessage)
     }
   }
 
-  protected showState(): void {
-    // Hide error message container if we do not have an error
-    this.errorMessageContainer.hidden = !this.errorMessage
-
-    this.errorMessageDiv.innerText = this.errorMessage
-  }
+  protected showState(): void {}
 }

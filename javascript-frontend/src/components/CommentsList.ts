@@ -2,6 +2,8 @@ import { MyComment } from '../types/Comment'
 import { doRequest } from '../utils/Request'
 import { CommentComponent } from './CommentComponent'
 import { Component } from './Component'
+import { eventBus } from './EventBus'
+import { ToastMessage } from './ToastComponent'
 
 export class CommentsList extends Component {
   comments: MyComment[] = []
@@ -49,10 +51,18 @@ export class CommentsList extends Component {
           text: messageContent,
         })
 
+        eventBus.notifySubscribers('toast', {
+          message: 'Comment added',
+          isError: false,
+        } as ToastMessage)
+
         this.commentInput.value = ''
         this.notifySubscribers('updatecomments')
       } catch (error) {
-        console.error(error)
+        eventBus.notifySubscribers('toast', {
+          message: error,
+          isError: true,
+        } as ToastMessage)
       }
     }
 
