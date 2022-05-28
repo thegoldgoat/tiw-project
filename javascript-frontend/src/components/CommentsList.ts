@@ -45,6 +45,15 @@ export class CommentsList extends Component {
       event.preventDefault()
 
       const messageContent = this.commentInput.value
+
+      if (!messageContent) {
+        eventBus.notifySubscribers('toast', {
+          message: 'Comment must contain some text',
+          isError: true,
+        } as ToastMessage)
+        return
+      }
+
       try {
         await doRequest('/comment', 'POST', {
           imagePk: this.imagePk,

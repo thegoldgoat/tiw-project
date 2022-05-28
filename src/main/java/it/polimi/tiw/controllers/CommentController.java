@@ -35,6 +35,11 @@ public class CommentController extends BaseServlet {
 
         String text = req.getParameter("text");
 
+        if (text.length() == 0) {
+            ControllerUtils.sendBadRequest(res, "Comment Must Contain Text");
+            return false;
+        }
+
         try {
             commentDAO.addComment(userId, imageId, text);
         } catch (SQLException e) {
