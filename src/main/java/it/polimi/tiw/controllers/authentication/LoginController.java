@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 import static it.polimi.tiw.utils.ControllerUtils.sendBadGateway;
 
-@WebServlet("/login")
+@WebServlet(urlPatterns = {"", "/login"})
 public class LoginController extends BaseAuthController {
     protected TemplateEngine templateEngine;
 

@@ -2,7 +2,7 @@ import { Image } from '../types/AllImages'
 import { Component } from './Component'
 import { eventBus } from './EventBus'
 
-const BASE_IMAGE_URL = import.meta.env.BASE_IMAGE_URL | '/tiw-project'
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL || '/tiw-project'
 
 export class ImageComponent extends Component {
   private image: Image
