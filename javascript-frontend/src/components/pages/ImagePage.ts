@@ -50,6 +50,7 @@ export class ImagePage extends Page {
       this.imageComponent = new ImageComponent(
         this.imageComponentMount,
         responseJson.image,
+        false,
         false
       )
       this.imageComponent.mount()

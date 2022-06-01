@@ -3,15 +3,24 @@ import { Component } from './Component'
 import { eventBus } from './EventBus'
 
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL || '/tiw-project'
+const MODAL_WINDOW_TIMEOUT = 1000
 
 export class ImageComponent extends Component {
   private image: Image
   private addAnchor: boolean
+  private activateHover: boolean
+  private mouseOverTimer!: number
 
-  constructor(mountElement: HTMLElement, image: Image, addAnchor: boolean) {
+  constructor(
+    mountElement: HTMLElement,
+    image: Image,
+    addAnchor: boolean,
+    activateHover: boolean
+  ) {
     super(mountElement)
     this.image = image
     this.addAnchor = addAnchor
+    this.activateHover = activateHover
   }
 
   protected mounted(): void {
@@ -43,6 +52,7 @@ export class ImageComponent extends Component {
 
       imageAnchor.onclick = (event) => {
         event.preventDefault()
+        this.stopPopUpTimeout()
         eventBus.notifySubscribers('gotoImage', this.image.ImagePK)
       }
     } else {
@@ -54,6 +64,18 @@ export class ImageComponent extends Component {
     imageElement.alt = this.image.title
     imageElement.style.height = '200px'
     imageElement.classList.add('img-thumbnail')
+
+    if (this.activateHover) {
+      imageElement.onmouseover = () => {
+        this.mouseOverTimer = setTimeout(() => {
+          this.openPopUp()
+        }, MODAL_WINDOW_TIMEOUT)
+      }
+
+      imageElement.onmouseout = () => {
+        this.stopPopUpTimeout()
+      }
+    }
 
     if (imageAnchor) {
       imageAnchor.appendChild(imageElement)
@@ -78,6 +100,14 @@ export class ImageComponent extends Component {
     card.appendChild(cardFooter)
 
     this.mountElement.appendChild(card)
+  }
+
+  private openPopUp() {
+    eventBus.notifySubscribers('openModalImage', this.image.ImagePK)
+  }
+
+  private stopPopUpTimeout() {
+    clearTimeout(this.mouseOverTimer)
   }
 
   protected showState(): void {}

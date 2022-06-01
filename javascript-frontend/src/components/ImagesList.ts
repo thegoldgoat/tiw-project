@@ -41,7 +41,7 @@ export class ImagesList extends Component {
         newDiv.classList.add('col-sm-12')
         newDiv.classList.add('col-md-6')
         newDiv.classList.add('col-lg-4')
-        const newImageComponent = new ImageComponent(newDiv, image, true)
+        const newImageComponent = new ImageComponent(newDiv, image, true, true)
         newImageComponent.mount()
         row.appendChild(newDiv)
       })
