@@ -209,11 +209,8 @@ public class AlbumDAO extends DAO {
     }
 
     private List<Image> getListImagesFromQuery(ResultSet resultSet) throws SQLException {
-        List<Image> images = new ArrayList<>(PAGE_SIZE);
-        for (int i = 0; i < PAGE_SIZE; i++) {
-            if (!resultSet.next()) {
-                break;
-            }
+        List<Image> images = new ArrayList<>();
+        while (resultSet.next()) {
             images.add(new Image(
                     resultSet.getInt("ImagePk"),
                     resultSet.getString("title"),

@@ -2,13 +2,10 @@ package it.polimi.tiw.controllers.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.tiw.beans.AllImages;
-import it.polimi.tiw.controllers.AlbumController;
+import it.polimi.tiw.beans.Image;
 import it.polimi.tiw.controllers.BaseServlet;
 import it.polimi.tiw.dao.AlbumDAO;
 import it.polimi.tiw.exceptions.AlbumNotFoundException;
-import it.polimi.tiw.exceptions.InvalidOperationException;
-import it.polimi.tiw.exceptions.PageOutOfBoundException;
 import it.polimi.tiw.utils.ControllerUtils;
 
 import javax.servlet.ServletException;
@@ -17,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/api/album")
 public class APIImagesController extends BaseServlet {
@@ -32,20 +30,22 @@ public class APIImagesController extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        AllImages allImages;
+        int albumPk;
         try {
-            allImages = AlbumController.getAllImagesFromReq(req, albumDAO);
+            albumPk = Integer.parseInt(req.getParameter("albumPk"));
+        } catch (Exception e) {
+            ControllerUtils.sendBadRequest(res, "Invalid albumPk");
+            return;
+        }
+
+        List<Image> images;
+        try {
+            images = albumDAO.getAllImages(albumPk);
         } catch (SQLException e) {
             ControllerUtils.sendBadGateway(res);
             return;
         } catch (AlbumNotFoundException e) {
             ControllerUtils.sendBadRequest(res, "Album does not exist");
-            return;
-        } catch (PageOutOfBoundException e) {
-            ControllerUtils.sendBadRequest(res, "Invalid page");
-            return;
-        } catch (InvalidOperationException e) {
-            ControllerUtils.sendBadRequest(res, e.getMessage());
             return;
         }
 
@@ -53,6 +53,6 @@ public class APIImagesController extends BaseServlet {
 
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
-        res.getWriter().write(gson.toJson(allImages));
+        res.getWriter().write(gson.toJson(images));
     }
 }
