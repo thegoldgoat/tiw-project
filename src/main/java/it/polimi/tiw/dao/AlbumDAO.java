@@ -111,7 +111,7 @@ public class AlbumDAO extends DAO {
         String queryMyAlbums = """
                     SELECT A.*, U.username FROM Album A, User U
                     WHERE UserFk = ? AND A.UserFk = U.UserPk
-                    ORDER BY date DESC
+                    ORDER BY A.userOrder, A.date DESC
                 """;
 
         String queryOtherAlbums = """

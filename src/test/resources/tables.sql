@@ -18,6 +18,7 @@ CREATE TABLE `Album`
     `AlbumPk` int PRIMARY KEY AUTO_INCREMENT,
     `title`   varchar(50) NOT NULL,
     `date`    date        NOT NULL,
+    `userOrder`   int,
     `UserFk`  int,
     CONSTRAINT `AlbumOwner` FOREIGN KEY (`UserFk`) REFERENCES `User` (`UserPk`)
 );
