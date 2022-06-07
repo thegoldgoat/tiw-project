@@ -24,11 +24,13 @@ export class AlbumPage extends Page {
 
     this.userAlbumList = new AlbumList(
       document.getElementById('userAlbums')!,
-      this.allAlbums.userAlbums
+      this.allAlbums.userAlbums,
+      true
     )
     this.otherUsersAlbumList = new AlbumList(
       document.getElementById('otherUsersAlbums')!,
-      this.allAlbums.otherUserAlbums
+      this.allAlbums.otherUserAlbums,
+      false
     )
 
     this.userAlbumList.mount()

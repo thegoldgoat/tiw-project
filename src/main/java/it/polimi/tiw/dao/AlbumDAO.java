@@ -250,4 +250,55 @@ public class AlbumDAO extends DAO {
 
         return getListImagesFromQuery(pStatement.executeQuery());
     }
+    
+    public void reorderAlbum(int UserFk, List<Integer> albumFkOrder) throws SQLException, InvalidOperationException {
+        String albumCountQuery = """
+                    SELECT Count(*) as count From Album
+                    WHERE UserFk = ?
+                """;
+        
+        PreparedStatement pStatement = connection.prepareStatement(albumCountQuery);
+
+        pStatement.setInt(1, UserFk);
+
+        ResultSet resultSet = pStatement.executeQuery();
+
+        if (!resultSet.next()) {
+            throw new SQLException("Why a Count Query got no data?");
+        }
+        int albumCount = resultSet.getInt("count");
+
+        if (albumCount != albumFkOrder.size()) {
+            throw new InvalidOperationException("Try to reorder album but the number of IDs do not match");
+        }
+
+        connection.setAutoCommit(false);
+        try {
+            PreparedStatement updateStatement = connection.prepareStatement("""
+                UPDATE Album
+                SET userOrder = ?
+                WHERE UserFk = ? AND AlbumPk = ?
+            """);
+            for (int order = 0; order< albumFkOrder.size(); order++) {
+                updateStatement.setInt(1, order);
+                updateStatement.setInt(2, UserFk);
+                updateStatement.setInt(3, albumFkOrder.get(order));
+                updateStatement.addBatch();
+            }
+
+            int[] numOfUpdates = updateStatement.executeBatch();
+            for (int i = 0; i < numOfUpdates.length; i++) {
+                if (numOfUpdates[i] != 1) {
+                    throw new BatchUpdateException();
+                }
+            }
+
+            connection.commit();
+        } catch (BatchUpdateException e) {
+            connection.setAutoCommit(true);
+            throw e;
+        } finally{
+            connection.setAutoCommit(true);
+        }
+    }
 }
