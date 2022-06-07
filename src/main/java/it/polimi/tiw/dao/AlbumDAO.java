@@ -125,6 +125,19 @@ public class AlbumDAO extends DAO {
         return new AllAlbums(userAlbums, otherUsersAlbums);
     }
 
+    private boolean checkAlbumExists(int AlbumFk) throws SQLException {
+        String checkAlbumExistQuery = """
+                SELECT * FROM Album
+                WHERE AlbumPk = ?
+                """;
+
+        PreparedStatement checkStatement = connection.prepareStatement(checkAlbumExistQuery);
+        checkStatement.setInt(1, AlbumFk);
+        ResultSet checkResultSet = checkStatement.executeQuery();
+
+        return checkResultSet.next();
+    }
+
     /**
      * Return at most 5 images inside AlbumFk album
      *
@@ -142,16 +155,7 @@ public class AlbumDAO extends DAO {
         int countBegin = page * PAGE_SIZE;
         int countEnd = countBegin + PAGE_SIZE;
 
-        String checkAlbumExistQuery = """
-                SELECT * FROM Album
-                WHERE AlbumPk = ?
-                """;
-
-        PreparedStatement checkStatement = connection.prepareStatement(checkAlbumExistQuery);
-        checkStatement.setInt(1, AlbumFk);
-        ResultSet checkResultSet = checkStatement.executeQuery();
-
-        if (!checkResultSet.next()) {
+        if (!checkAlbumExists(AlbumFk)) {
             throw new AlbumNotFoundException(AlbumFk);
         }
 
@@ -199,8 +203,12 @@ public class AlbumDAO extends DAO {
         pStatement.setInt(2, countBegin);
         pStatement.setInt(3, countEnd);
 
-        ResultSet resultSet = pStatement.executeQuery();
+        List<Image> images = getListImagesFromQuery(pStatement.executeQuery());
 
+        return new AllImages(images, pageCount, page);
+    }
+
+    private List<Image> getListImagesFromQuery(ResultSet resultSet) throws SQLException {
         List<Image> images = new ArrayList<>(PAGE_SIZE);
         for (int i = 0; i < PAGE_SIZE; i++) {
             if (!resultSet.next()) {
@@ -215,6 +223,34 @@ public class AlbumDAO extends DAO {
                     resultSet.getInt("UserFk")));
         }
 
-        return new AllImages(images, pageCount, page);
+        return images;
+    }
+
+    /**
+     * Return all images inside AlbumFk album
+     *
+     * @param AlbumFk ID of the album
+     * @return List of images inside that page of the album
+     * @throws SQLException     SQL library internal exception
+     * @throws AlbumNotFoundException Album does not exist
+     */
+    public List<Image> getAllImages(int AlbumFk) throws SQLException, AlbumNotFoundException {
+
+
+        if (!checkAlbumExists(AlbumFk)) {
+            throw new AlbumNotFoundException(AlbumFk);
+        }
+        String query = """
+                SELECT * FROM Image I, ImageAlbum IA, Album A
+                WHERE A.AlbumPk = ?
+                AND A.AlbumPk = IA.AlbumFk
+                AND I.ImagePk = IA.ImageFk
+                ORDER BY I.date DESC
+                """;
+        PreparedStatement pStatement = connection.prepareStatement(query);
+
+        pStatement.setInt(1, AlbumFk);
+
+        return getListImagesFromQuery(pStatement.executeQuery());
     }
 }
